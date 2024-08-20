@@ -2,7 +2,7 @@
 
 import { Session } from 'next-auth';
 import { ReactNode } from 'react';
-import ApolloWrapper from './ApolloProvider';
+import { ApolloWrapper } from './ApolloProvider';
 import SessionProvider from './SessionProvider';
 
 interface AppProvidersProps {

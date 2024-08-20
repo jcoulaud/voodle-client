@@ -1,15 +1,16 @@
 'use client';
 
 import { useApollo } from '@/hooks/useApollo';
-import { ApolloProvider } from '@apollo/client';
+import { ApolloProvider, NormalizedCacheObject } from '@apollo/client';
 import { ReactNode } from 'react';
 
 interface ApolloWrapperProps {
   children: ReactNode;
+  initialState?: NormalizedCacheObject | null;
 }
 
-export default function ApolloWrapper({ children }: ApolloWrapperProps): JSX.Element {
-  const client = useApollo();
+export function ApolloWrapper({ children, initialState = null }: ApolloWrapperProps) {
+  const client = useApollo(initialState);
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }

@@ -31,13 +31,13 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const result = await signIn('custom', {
+      const result = await signIn('custom-email', {
         email: data.email,
         redirect: false,
       });
 
       if (result?.error) {
-        setError('An error occurred. Please try again.');
+        setError(result.error);
       } else {
         setSuccess(true);
       }
@@ -50,7 +50,7 @@ export default function LoginForm() {
 
   if (success) {
     return (
-      <div className='text-center'>
+      <div className='text-center text-gray-200'>
         <h2 className='text-2xl font-semibold mb-4'>Check your email</h2>
         <p>A sign-in link has been sent to your email address.</p>
       </div>
@@ -68,10 +68,10 @@ export default function LoginForm() {
           placeholder='Enter your email'
           aria-invalid={errors.email ? 'true' : 'false'}
           aria-describedby='email-error'
-          className={`block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ${
+          className={`block w-full rounded-md border-0 py-1.5 pr-10 bg-surface-dark text-gray-200 ring-1 ring-inset ${
             errors.email
-              ? 'ring-red-300 placeholder:text-red-300 focus:ring-red-500'
-              : 'ring-gray-300 placeholder:text-gray-400 focus:ring-indigo-600'
+              ? 'ring-red-500 placeholder:text-red-300 focus:ring-red-500'
+              : 'ring-gray-600 placeholder:text-gray-500 focus:ring-accent-400'
           } focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
         />
         {errors.email && (
@@ -81,15 +81,15 @@ export default function LoginForm() {
         )}
       </div>
       {errors.email && (
-        <p className='mt-2 text-sm text-red-600' id='email-error'>
+        <p className='mt-2 text-sm text-red-400' id='email-error'>
           {errors.email.message}
         </p>
       )}
-      {error && <p className='mt-2 text-sm text-red-600'>{error}</p>}
+      {error && <p className='mt-2 text-sm text-red-400'>{error}</p>}
       <button
         type='submit'
         disabled={isLoading}
-        className='mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50'>
+        className='mt-4 w-full bg-accent-600 text-white py-2 px-4 rounded-md hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-background-dark disabled:opacity-50'>
         {isLoading ? 'Sending...' : 'Sign In with Email'}
       </button>
     </form>

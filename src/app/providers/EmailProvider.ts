@@ -4,8 +4,8 @@ import { SEND_MAGIC_LINK } from '../lib/graphql/mutations/auth';
 
 export default function CustomProvider(): Provider {
   return {
-    id: 'custom',
-    name: 'Custom',
+    id: 'custom-email',
+    name: 'Custom Email Provider',
     type: 'credentials',
     credentials: {
       email: { label: 'Email', type: 'email' },
