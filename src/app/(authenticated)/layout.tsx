@@ -16,7 +16,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang='en' className='h-full'>
-      <body className={`${inter.className} h-full`}>
+      <body className={inter.className}>
         <AppProviders session={session}>
           <DashboardLayout
             userName={session?.user?.name ?? 'Julien'}

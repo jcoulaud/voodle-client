@@ -1,29 +1,45 @@
+import React from 'react';
+
 interface StepIndicatorProps {
-  steps: string[];
-  currentStep: number;
+  steps: readonly string[];
+  currentStep: string;
 }
 
 export const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep }) => {
   return (
     <nav aria-label='Progress'>
-      <ol role='list' className='flex items-center'>
+      <ol className='flex items-center'>
         {steps.map((step, index) => (
-          <li key={step} className={index !== steps.length - 1 ? 'pr-8 sm:pr-20' : ''}>
-            <div className='relative flex items-center'>
-              <span className='absolute flex h-5 w-5 p-px' aria-hidden='true'>
-                <span
-                  className={`h-full w-full rounded-full ${
-                    index < currentStep ? 'bg-primary' : 'bg-border'
-                  }`}
-                />
-              </span>
-              <span
-                className={`ml-4 text-sm font-medium ${
-                  index <= currentStep ? 'text-primary' : 'text-text-secondary'
+          <li key={step} className={index !== steps.length - 1 ? 'flex-1' : ''}>
+            <div className='flex items-center'>
+              <div
+                className={`relative w-8 h-8 flex items-center justify-center rounded-full ${
+                  step === currentStep
+                    ? 'bg-primary text-white'
+                    : index < steps.indexOf(currentStep)
+                    ? 'bg-primary-hover text-white'
+                    : 'bg-gray-200 text-gray-400'
                 }`}>
-                {step}
-              </span>
+                {index + 1}
+              </div>
+              {index !== steps.length - 1 && (
+                <div className='flex-1 h-0.5 mx-2 bg-gray-200'>
+                  <div
+                    className='h-0.5 bg-primary-hover'
+                    style={{
+                      width: `${
+                        index < steps.indexOf(currentStep)
+                          ? '100%'
+                          : index === steps.indexOf(currentStep)
+                          ? '50%'
+                          : '0%'
+                      }`,
+                    }}
+                  />
+                </div>
+              )}
             </div>
+            <div className='mt-2 text-sm font-medium text-center'>{step}</div>
           </li>
         ))}
       </ol>

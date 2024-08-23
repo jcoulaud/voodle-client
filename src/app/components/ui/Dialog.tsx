@@ -6,7 +6,6 @@ import {
   Transition,
   TransitionChild,
 } from '@headlessui/react';
-import { XIcon } from 'lucide-react';
 import { Fragment, ReactNode, forwardRef, useImperativeHandle, useRef } from 'react';
 import { Button } from './Button';
 
@@ -21,19 +20,13 @@ interface DialogProps {
   open: boolean;
   onClose: (value: boolean) => void;
   title: string;
-  description: string;
+  description?: string;
   icon?: ReactNode;
   variant?: DialogVariant;
   primaryAction?: ActionProps;
   secondaryAction?: ActionProps;
-  showCloseIcon?: boolean;
+  children?: ReactNode;
 }
-
-const variantStyles: Record<DialogVariant, string> = {
-  success: 'bg-green-100 text-green-600',
-  info: 'bg-blue-100 text-blue-600',
-  danger: 'bg-red-100 text-error',
-};
 
 const mapVariantToButtonVariant = (variant: DialogVariant): 'primary' | 'destructive' => {
   switch (variant) {
@@ -52,11 +45,10 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(
       onClose,
       title,
       description,
-      icon,
       variant = 'info',
       primaryAction,
       secondaryAction,
-      showCloseIcon = false,
+      children,
     },
     ref,
   ) => {
@@ -93,63 +85,48 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(
                 leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'>
                 <DialogPanel
                   ref={ref}
-                  className='relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6'>
-                  {showCloseIcon && (
-                    <div className='absolute right-0 top-0 hidden pr-4 pt-4 sm:block'>
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        onClick={() => onClose(false)}
-                        aria-label='Close'>
-                        <XIcon className='h-6 w-6' aria-hidden='true' />
-                      </Button>
-                    </div>
-                  )}
-                  <div>
-                    {icon && (
-                      <div
-                        className={cn(
-                          'mx-auto flex h-12 w-12 items-center justify-center rounded-full',
-                          variantStyles[variant],
-                        )}>
-                        {icon}
-                      </div>
-                    )}
-                    <div className='mt-3 text-center sm:mt-5'>
-                      <DialogTitle
-                        as='h3'
-                        className='text-base font-semibold leading-6 text-text-title'>
-                        {title}
-                      </DialogTitle>
+                  className='relative transform overflow-hidden rounded-md bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6'>
+                  <div className='text-center'>
+                    <DialogTitle
+                      as='h3'
+                      className='text-lg font-semibold leading-6 text-text-title'>
+                      {title}
+                    </DialogTitle>
+                    {description && (
                       <div className='mt-2'>
                         <p className='text-sm text-text-body'>{description}</p>
                       </div>
+                    )}
+                  </div>
+
+                  {children && <div className='mt-4'>{children}</div>}
+
+                  {(primaryAction || secondaryAction) && (
+                    <div
+                      className={cn(
+                        'mt-5 sm:mt-6',
+                        secondaryAction && primaryAction
+                          ? 'sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3'
+                          : '',
+                      )}>
+                      {primaryAction && (
+                        <Button
+                          variant={mapVariantToButtonVariant(variant)}
+                          className={secondaryAction ? 'sm:col-start-2' : ''}
+                          onClick={primaryAction.onClick}>
+                          {primaryAction.label}
+                        </Button>
+                      )}
+                      {secondaryAction && (
+                        <Button
+                          variant='secondary'
+                          className={cn('mt-3 sm:mt-0', !primaryAction && 'sm:col-start-2')}
+                          onClick={secondaryAction.onClick}>
+                          {secondaryAction.label}
+                        </Button>
+                      )}
                     </div>
-                  </div>
-                  <div
-                    className={cn(
-                      'mt-5 sm:mt-6',
-                      secondaryAction && primaryAction
-                        ? 'sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3'
-                        : '',
-                    )}>
-                    {primaryAction && (
-                      <Button
-                        variant={mapVariantToButtonVariant(variant)}
-                        className={secondaryAction ? 'sm:col-start-2' : ''}
-                        onClick={primaryAction.onClick}>
-                        {primaryAction.label}
-                      </Button>
-                    )}
-                    {secondaryAction && (
-                      <Button
-                        variant='secondary'
-                        className={cn('mt-3 sm:mt-0', !primaryAction && 'sm:col-start-2')}
-                        onClick={secondaryAction.onClick}>
-                        {secondaryAction.label}
-                      </Button>
-                    )}
-                  </div>
+                  )}
                 </DialogPanel>
               </TransitionChild>
             </div>

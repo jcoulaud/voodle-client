@@ -7,3 +7,17 @@
 .lucide {
   stroke-width: 1px;
 }
+
+@layer utilities {
+  .no-spinner {
+    appearance: textfield;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+  }
+  .no-spinner::-webkit-inner-spin-button,
+  .no-spinner::-webkit-outer-spin-button {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}

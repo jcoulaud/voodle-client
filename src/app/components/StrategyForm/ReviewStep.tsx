@@ -12,9 +12,6 @@ export const ReviewStep: React.FC = () => {
         <h3 className='text-md font-medium'>Buy Strategy</h3>
         <p>Action Type: {formData.buy.action.type}</p>
         {formData.buy.action.type === 'fixedAmount' && <p>Amount: {formData.buy.action.amount}</p>}
-        {formData.buy.action.type === 'percentageOfBalance' && (
-          <p>Percentage: {formData.buy.action.percentage}%</p>
-        )}
       </div>
       <div>
         <h3 className='text-md font-medium'>Sell Strategy</h3>
