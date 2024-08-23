@@ -8,41 +8,35 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/styles/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
         sans: ['Inter var', ...fontFamily.sans],
       },
       colors: {
-        accent: {
-          50: '#f7fee7',
-          100: '#ecfccb',
-          200: '#d9f99d',
-          300: '#bef264',
-          400: '#a3e635',
-          500: '#84cc16',
-          600: '#65a30d',
-          700: '#4d7c0f',
-          800: '#3f6212',
-          900: '#365314',
+        primary: {
+          DEFAULT: '#4f46e5', // Indigo-600
+          hover: '#6366f1', // Indigo-500
         },
         background: {
-          dark: '#121212',
-          darker: '#0a0a0a',
-          light: '#ffffff',
+          DEFAULT: '#fafafa', // Neutra-50
         },
-        surface: {
-          dark: '#1e1e1e',
-          light: '#f5f5f5',
+        text: {
+          body: {
+            DEFAULT: '#4b5563', // Gray-600
+            hover: '#1f2937', // Gray-800
+          },
+          title: '#111827', // Gray-900
+          disabled: '#d1d5db', // Gray-300
         },
-      },
-      boxShadow: {
-        glow: '0 0 10px rgba(163, 230, 53, 0.5)',
+        error: {
+          DEFAULT: '#dc2626', // Red-600
+          hover: '#ef4444', // Red-500
+        },
       },
     },
   },
-  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
+  plugins: [require('@tailwindcss/forms')],
 };
 
 export default config;

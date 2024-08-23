@@ -1,8 +1,10 @@
 'use client';
 
+import { Button } from '@/app/components/ui/Button';
+import { Card } from '@/app/components/ui/Card';
 import { VERIFY_MAGIC_LINK } from '@/app/lib/graphql/mutations/auth';
 import { useMutation } from '@apollo/client';
-import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
+import { CheckCircle, XCircle } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -61,25 +63,27 @@ export default function VerifyPage() {
   }, [token, email, router, verifyMagicLink]);
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-background-dark text-gray-200'>
-      <div className='w-full max-w-md bg-surface-dark rounded-lg shadow-xl p-8'>
-        {isVerifying ? (
-          <VerifyingState />
-        ) : error ? (
-          <ErrorState error={error} onRetry={() => router.push('/')} />
-        ) : (
-          <SuccessState />
-        )}
-      </div>
+    <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-background text-text-body'>
+      <Card className='w-full max-w-md'>
+        <Card.Content>
+          {isVerifying ? (
+            <VerifyingState />
+          ) : error ? (
+            <ErrorState error={error} onRetry={() => router.push('/')} />
+          ) : (
+            <SuccessState />
+          )}
+        </Card.Content>
+      </Card>
     </div>
   );
 }
 
 const VerifyingState = () => (
   <>
-    <h1 className='text-2xl font-bold mb-4 text-center'>Verifying your login...</h1>
+    <Card.Title className='text-center mb-4'>Verifying your login...</Card.Title>
     <div className='flex justify-center'>
-      <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent-400'></div>
+      <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary'></div>
     </div>
   </>
 );
@@ -87,24 +91,24 @@ const VerifyingState = () => (
 const ErrorState = ({ error, onRetry }: { error: string; onRetry: () => void }) => (
   <>
     <div className='flex items-center justify-center mb-4'>
-      <ExclamationCircleIcon className='h-12 w-12 text-red-500' aria-hidden='true' />
+      <XCircle className='h-12 w-12 text-error' aria-hidden='true' />
     </div>
-    <h1 className='text-2xl font-bold mb-4 text-center'>Verification Failed</h1>
-    <p className='text-red-400 mb-6 text-center'>{error}</p>
-    <button
-      onClick={onRetry}
-      className='w-full bg-accent-600 text-white py-2 px-4 rounded-md hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-background-dark transition-colors'>
+    <Card.Title className='text-center mb-4'>Verification Failed</Card.Title>
+    <Card.Description className='text-error mb-6 text-center'>{error}</Card.Description>
+    <Button onClick={onRetry} variant='primary' size='lg' className='w-full'>
       Return to Home
-    </button>
+    </Button>
   </>
 );
 
 const SuccessState = () => (
   <>
     <div className='flex items-center justify-center mb-4'>
-      <CheckCircleIcon className='h-12 w-12 text-green-500' aria-hidden='true' />
+      <CheckCircle className='h-12 w-12 text-primary' aria-hidden='true' />
     </div>
-    <h1 className='text-2xl font-bold mb-4 text-center'>Verification Successful</h1>
-    <p className='text-gray-400 mb-6 text-center'>You are being redirected to the dashboard...</p>
+    <Card.Title className='text-center mb-4'>Verification Successful</Card.Title>
+    <Card.Description className='mb-6 text-center'>
+      You are being redirected to the dashboard...
+    </Card.Description>
   </>
 );

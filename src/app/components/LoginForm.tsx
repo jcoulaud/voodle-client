@@ -1,11 +1,11 @@
 'use client';
 
-import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Input } from './ui/Input';
 
 const schema = z.object({
   email: z.string().email('Invalid email address'),
@@ -50,8 +50,8 @@ export default function LoginForm() {
 
   if (success) {
     return (
-      <div className='text-center text-gray-200'>
-        <h2 className='text-2xl font-semibold mb-4'>Check your email</h2>
+      <div className='text-center text-text-body'>
+        <h2 className='text-2xl font-semibold mb-4 text-text-title'>Check your email</h2>
         <p>A sign-in link has been sent to your email address.</p>
       </div>
     );
@@ -59,38 +59,20 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='w-full max-w-md'>
-      <div className='relative mt-2 rounded-md shadow-sm'>
-        <input
-          {...register('email')}
-          type='email'
-          id='email'
-          name='email'
-          placeholder='Enter your email'
-          aria-invalid={errors.email ? 'true' : 'false'}
-          aria-describedby='email-error'
-          className={`block w-full rounded-md border-0 py-1.5 pr-10 bg-surface-dark text-gray-200 ring-1 ring-inset ${
-            errors.email
-              ? 'ring-red-500 placeholder:text-red-300 focus:ring-red-500'
-              : 'ring-gray-600 placeholder:text-gray-500 focus:ring-accent-400'
-          } focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
-        />
-        {errors.email && (
-          <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3'>
-            <ExclamationCircleIcon className='h-5 w-5 text-red-500' aria-hidden='true' />
-          </div>
-        )}
-      </div>
-      {errors.email && (
-        <p className='mt-2 text-sm text-red-400' id='email-error'>
-          {errors.email.message}
-        </p>
-      )}
-      {error && <p className='mt-2 text-sm text-red-400'>{error}</p>}
+      <Input
+        {...register('email')}
+        type='email'
+        id='email'
+        name='email'
+        placeholder='Enter your email'
+        error={errors.email?.message}
+      />
+      {error && <p className='mt-2 text-sm text-error'>{error}</p>}
       <button
         type='submit'
         disabled={isLoading}
-        className='mt-4 w-full bg-accent-600 text-white py-2 px-4 rounded-md hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-background-dark disabled:opacity-50'>
-        {isLoading ? 'Sending...' : 'Sign In with Email'}
+        className='mt-4 w-full bg-primary text-background py-2 px-4 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed'>
+        {isLoading ? 'Sending...' : 'Sign In'}
       </button>
     </form>
   );

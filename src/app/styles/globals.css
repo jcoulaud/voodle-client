@@ -3,3 +3,7 @@
 @import 'tailwindcss/utilities';
 
 @import url('https://rsms.me/inter/inter.css');
+
+.lucide {
+  stroke-width: 1px;
+}

@@ -1,23 +1,30 @@
-import HeaderMenu from '@/app/components/HeaderMenu';
+import DashboardLayout from '@/app/components/DashboardLayout';
+import AppProviders from '@/app/providers/AppProviders';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { getServerSession } from 'next-auth/next';
-import { redirect } from 'next/navigation';
-import React from 'react';
+import { Inter } from 'next/font/google';
 
-export default async function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata = {
+  title: 'Yoloy',
+  description: 'Trading Made Easy',
+};
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user) {
-    redirect('/login');
-  }
-
   return (
-    <div className='min-h-screen bg-background-darker'>
-      <HeaderMenu
-        userName={session.user.name ?? 'User'}
-        userEmail={session.user.email ?? 'user@example.com'}
-      />
-      <main className='container mx-auto px-4 py-8'>{children}</main>
-    </div>
+    <html lang='en' className='h-full'>
+      <body className={`${inter.className} h-full`}>
+        <AppProviders session={session}>
+          <DashboardLayout
+            userName={session?.user?.name ?? 'Julien'}
+            userEmail={session?.user?.email ?? 'julien@yoloy.ai'}>
+            {children}
+          </DashboardLayout>
+        </AppProviders>
+      </body>
+    </html>
   );
 }
