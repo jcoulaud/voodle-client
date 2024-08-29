@@ -19,7 +19,12 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ onPrev, onSubmit }) => {
       <h2 className='text-2xl font-bold'>Review Your Strategy</h2>
 
       <div>
-        <h3 className='text-lg font-semibold'>Buy Strategy</h3>
+        <h3 className='text-lg font-semibold'>Name</h3>
+        <p>{formData.name}</p>
+      </div>
+
+      <div>
+        <h3 className='text-lg font-semibold'>Buy Conditions</h3>
         <p>Investment Amount: ${formData.buy?.action.amount}</p>
         <ul>
           {formData.buy?.conditions.map((condition, index) => (
@@ -31,7 +36,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ onPrev, onSubmit }) => {
       </div>
 
       <div>
-        <h3 className='text-lg font-semibold'>Sell Strategies</h3>
+        <h3 className='text-lg font-semibold'>Sell Conditions</h3>
         {formData.sell?.map((strategy, index) => (
           <div key={index}>
             <p>

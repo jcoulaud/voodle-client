@@ -7,9 +7,10 @@ import { BuyCondition, StrategyFormData, baseConditionSchema } from './strategyS
 
 interface BuyStrategyStepProps {
   onNext: () => void;
+  onPrev: () => void;
 }
 
-export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext }) => {
+export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext, onPrev }) => {
   const { control, watch, setValue, trigger } = useFormContext<StrategyFormData>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentConditionType, setCurrentConditionType] = useState<BuyCondition['type'] | null>(
@@ -115,7 +116,10 @@ export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext }) => {
         </div>
       </div>
 
-      <div className='flex justify-end'>
+      <div className='flex justify-between'>
+        <Button onClick={onPrev} variant='ghost'>
+          Previous: Strategy Name
+        </Button>
         <Button
           onClick={handleNext}
           disabled={!investmentAmount || buyConditions.length === 0}

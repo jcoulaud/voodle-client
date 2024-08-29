@@ -66,6 +66,7 @@ const sellStrategySchema = z.object({
 });
 
 export const strategySchema = z.object({
+  name: z.string().min(3, 'Strategy name must be at least 3 characters long'),
   buy: z
     .object({
       conditions: z.array(buyConditionSchema).min(1, 'At least one buy condition is required'),

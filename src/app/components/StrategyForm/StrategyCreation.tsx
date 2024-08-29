@@ -1,24 +1,35 @@
+import { CREATE_STRATEGY } from '@/app/lib/graphql/mutations/strategy';
+import { useMutation } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { BuyStrategyStep } from './BuyStrategyStep';
+import { NameStrategyStep } from './NameStrategyStep';
 import { ReviewStep } from './ReviewStep';
 import { SellStrategyStep } from './SellStrategyStep';
 import { StepIndicator } from './StepIndicator';
 import { StrategyFormData, strategySchema } from './strategySchema';
 
-const steps = ['Buy Strategy', 'Sell Strategy', 'Review'] as const;
+const steps = ['Name', 'Buy Conditions', 'Sell Conditions', 'Review'] as const;
 type Step = (typeof steps)[number];
 
 export const StrategyCreation: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<Step>('Buy Strategy');
+  const [currentStep, setCurrentStep] = useState<Step>('Name');
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
+
+  const [createStrategy] = useMutation(CREATE_STRATEGY);
 
   const methods = useForm<StrategyFormData>({
     resolver: zodResolver(strategySchema),
     mode: 'onChange',
     defaultValues: {
-      buy: { conditions: [], action: { type: 'fixedAmount', amount: 1 } },
+      name: '',
+      buy: {
+        conditions: [],
+        action: { type: 'fixedAmount', amount: 0 },
+      },
       sell: [],
     },
   });
@@ -39,11 +50,25 @@ export const StrategyCreation: React.FC = () => {
 
   const onSubmit = async (data: StrategyFormData) => {
     try {
+      console.log('session', session);
       setError(null);
-      console.log('Strategy submitted:', data);
-      // TODO: call mutation to create strategy
+      if (!session?.user?.id) {
+        throw new Error('User not authenticated');
+      }
+      const result = await createStrategy({
+        variables: {
+          input: {
+            name: data.name,
+            strategy: { buy: data.buy, sell: data.sell },
+            userId: parseInt(session.user.id),
+          },
+        },
+      });
+      console.log('Strategy created:', result.data.createStrategy);
+      // TODO: Show success message and redirect to strategy list
     } catch (err) {
       setError('An error occurred while submitting the strategy. Please try again.');
+      console.error('Error creating strategy:', err);
     }
   };
 
@@ -52,8 +77,11 @@ export const StrategyCreation: React.FC = () => {
       <div className='space-y-8'>
         <StepIndicator steps={steps} currentStep={currentStep} />
 
-        {currentStep === 'Buy Strategy' && <BuyStrategyStep onNext={nextStep} />}
-        {currentStep === 'Sell Strategy' && (
+        {currentStep === 'Name' && <NameStrategyStep onNext={nextStep} />}
+        {currentStep === 'Buy Conditions' && (
+          <BuyStrategyStep onNext={nextStep} onPrev={prevStep} />
+        )}
+        {currentStep === 'Sell Conditions' && (
           <SellStrategyStep onPrev={prevStep} onNext={nextStep} />
         )}
         {currentStep === 'Review' && <ReviewStep onPrev={prevStep} onSubmit={onSubmit} />}
