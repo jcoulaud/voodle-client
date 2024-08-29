@@ -1,30 +1,14 @@
+'use client';
+
 import DashboardLayout from '@/app/components/DashboardLayout';
-import AppProviders from '@/app/providers/AppProviders';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { getServerSession } from 'next-auth/next';
-import { Inter } from 'next/font/google';
+import { useAuth } from '@/app/providers/AuthProvider';
 
-const inter = Inter({ subsets: ['latin'] });
-
-export const metadata = {
-  title: 'Yoloy',
-  description: 'Trading Made Easy',
-};
-
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions);
+export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
 
   return (
-    <html lang='en' className='h-full'>
-      <body className={inter.className}>
-        <AppProviders session={session}>
-          <DashboardLayout
-            userName={session?.user?.name ?? 'Julien'}
-            userEmail={session?.user?.email ?? 'julien@yoloy.ai'}>
-            {children}
-          </DashboardLayout>
-        </AppProviders>
-      </body>
-    </html>
+    <DashboardLayout userName={user?.name ?? 'User'} userEmail={user?.email ?? 'user@example.com'}>
+      {children}
+    </DashboardLayout>
   );
 }

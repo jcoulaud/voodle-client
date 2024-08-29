@@ -2,30 +2,20 @@
 
 import { Button } from '@/app/components/ui/Button';
 import { Card } from '@/app/components/ui/Card';
-import { VERIFY_MAGIC_LINK } from '@/app/lib/graphql/mutations/auth';
-import { useMutation } from '@apollo/client';
+import { useAuth } from '@/app/providers/AuthProvider';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-
-interface VerifyMagicLinkResponse {
-  verifyMagicLink: {
-    success: boolean;
-    message: string;
-    accessToken?: string;
-    refreshToken?: string;
-  };
-}
 
 export default function VerifyPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams?.get('token') ?? null;
   const email = searchParams?.get('email') ?? null;
-  const [verifyMagicLink] = useMutation<VerifyMagicLinkResponse>(VERIFY_MAGIC_LINK);
   const [error, setError] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(true);
   const verifyAttempted = useRef(false);
+  const { verifyMagicLink } = useAuth();
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -33,15 +23,8 @@ export default function VerifyPage() {
       verifyAttempted.current = true;
 
       try {
-        const { data } = await verifyMagicLink({
-          variables: { token, email },
-        });
-
-        if (data?.verifyMagicLink.success) {
-          router.push('/dashboard');
-        } else {
-          setError(data?.verifyMagicLink.message || 'Verification failed');
-        }
+        await verifyMagicLink(token, email);
+        router.push('/dashboard');
       } catch (error) {
         console.error('Verification error:', error);
         setError('Error during verification. Please try again.');

@@ -1,5 +1,3 @@
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { getServerSession } from 'next-auth/next';
 import { Inter } from 'next/font/google';
 import AppProviders from './providers/AppProviders';
 import './styles/globals.css';
@@ -11,13 +9,11 @@ export const metadata = {
   description: 'Trading Made Easy',
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions);
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='en'>
+    <html lang='en' className='h-full'>
       <body className={inter.className}>
-        <AppProviders session={session}>{children}</AppProviders>
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );

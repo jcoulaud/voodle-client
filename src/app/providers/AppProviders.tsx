@@ -1,19 +1,17 @@
 'use client';
 
-import { Session } from 'next-auth';
 import { ReactNode } from 'react';
 import { ApolloWrapper } from './ApolloProvider';
-import SessionProvider from './SessionProvider';
+import { AuthProvider } from './AuthProvider';
 
 interface AppProvidersProps {
   children: ReactNode;
-  session: Session | null;
 }
 
-export default function AppProviders({ children, session }: AppProvidersProps) {
+export default function AppProviders({ children }: AppProvidersProps) {
   return (
-    <SessionProvider session={session}>
-      <ApolloWrapper>{children}</ApolloWrapper>
-    </SessionProvider>
+    <ApolloWrapper>
+      <AuthProvider>{children}</AuthProvider>
+    </ApolloWrapper>
   );
 }

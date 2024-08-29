@@ -25,6 +25,7 @@ export default function CustomProvider(): Provider {
 
         if (response.ok) {
           const data = await response.json();
+          console.log('data', data);
           if (data.data.sendMagicLink.success) {
             return { id: credentials.email, email: credentials.email };
           } else {

@@ -1,17 +1,8 @@
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { getServerSession } from 'next-auth/next';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { Button } from './components/ui/Button';
 import { Card } from './components/ui/Card';
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
-
-  if (session) {
-    redirect('/dashboard');
-  }
-
   return (
     <main className='flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-8'>
       <div className='w-full max-w-md'>

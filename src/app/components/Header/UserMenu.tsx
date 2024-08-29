@@ -1,7 +1,6 @@
+import { useAuth } from '@/app/providers/AuthProvider';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
-import { signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import Avatar from './Avatar';
 import { userNavigation } from './navigation';
 
@@ -15,13 +14,11 @@ function classNames(...classes: string[]) {
 }
 
 export default function UserMenu({ userName, userEmail }: UserMenuProps) {
-  const router = useRouter();
+  const { logout } = useAuth();
 
   const handleSignOut = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    console.log('signing out');
     e.preventDefault();
-    await signOut({ redirect: true });
-    router.push('/');
+    logout();
   };
 
   return (

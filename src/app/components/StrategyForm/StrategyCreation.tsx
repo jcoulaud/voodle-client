@@ -1,7 +1,7 @@
 import { CREATE_STRATEGY } from '@/app/lib/graphql/mutations/strategy';
+import { useUser } from '@/hooks/useUser';
 import { useMutation } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { BuyStrategyStep } from './BuyStrategyStep';
@@ -17,7 +17,9 @@ type Step = (typeof steps)[number];
 export const StrategyCreation: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<Step>('Name');
   const [error, setError] = useState<string | null>(null);
-  const { data: session } = useSession();
+  const { user, isLoading } = useUser();
+  console.log('isLoading', isLoading);
+  console.log('user', user);
 
   const [createStrategy] = useMutation(CREATE_STRATEGY);
 
@@ -50,17 +52,12 @@ export const StrategyCreation: React.FC = () => {
 
   const onSubmit = async (data: StrategyFormData) => {
     try {
-      console.log('session', session);
       setError(null);
-      if (!session?.user?.id) {
-        throw new Error('User not authenticated');
-      }
       const result = await createStrategy({
         variables: {
           input: {
             name: data.name,
             strategy: { buy: data.buy, sell: data.sell },
-            userId: parseInt(session.user.id),
           },
         },
       });

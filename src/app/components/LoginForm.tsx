@@ -43,6 +43,7 @@ export default function LoginForm() {
       }
     } catch (error) {
       setError('An unexpected error occurred.');
+      console.error('Signin error:', error);
     } finally {
       setIsLoading(false);
     }

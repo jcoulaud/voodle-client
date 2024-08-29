@@ -14,6 +14,18 @@ export const VERIFY_MAGIC_LINK = gql`
     verifyMagicLink(token: $token, email: $email) {
       success
       message
+      accessToken
+      refreshToken
+    }
+  }
+`;
+
+export const REFRESH_TOKEN = gql`
+  mutation RefreshToken($refreshToken: String!) {
+    refreshToken(refreshToken: $refreshToken) {
+      success
+      message
+      accessToken
     }
   }
 `;
