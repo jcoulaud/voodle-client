@@ -1,7 +1,8 @@
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { getServerSession } from 'next-auth/next';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import LoginForm from './components/LoginForm';
+import { Button } from './components/ui/Button';
 import { Card } from './components/ui/Card';
 
 export default async function Home() {
@@ -19,8 +20,12 @@ export default async function Home() {
             <Card.Title className='text-4xl font-bold text-center text-primary'>YOLOY</Card.Title>
             <Card.Description className='text-lg text-center'>Trading made easy</Card.Description>
           </Card.Header>
-          <Card.Content>
-            <LoginForm />
+          <Card.Content className='flex justify-center'>
+            <Link href='/login' passHref>
+              <Button variant='primary' size='lg'>
+                Login
+              </Button>
+            </Link>
           </Card.Content>
         </Card>
       </div>

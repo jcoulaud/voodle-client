@@ -1,13 +1,40 @@
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloClient, HttpLink, InMemoryCache, from } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { onError } from '@apollo/client/link/error';
 
 let apolloClient: ApolloClient<any> | undefined;
+
+const httpLink = new HttpLink({
+  uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
+  credentials: 'include',
+});
+
+const authLink = setContext((_, { headers }) => {
+  return {
+    headers: {
+      ...headers,
+    },
+  };
+});
+
+const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+  if (graphQLErrors) {
+    for (let err of graphQLErrors) {
+      switch (err.extensions?.code) {
+        case 'UNAUTHENTICATED':
+          return forward(operation);
+      }
+    }
+  }
+  if (networkError) {
+    console.log(`[Network error]: ${networkError}`);
+  }
+});
 
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
-    link: new HttpLink({
-      uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
-    }),
+    link: from([errorLink, authLink, httpLink]),
     cache: new InMemoryCache(),
   });
 }

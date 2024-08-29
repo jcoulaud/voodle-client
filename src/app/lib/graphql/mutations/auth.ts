@@ -14,7 +14,6 @@ export const VERIFY_MAGIC_LINK = gql`
     verifyMagicLink(token: $token, email: $email) {
       success
       message
-      session
     }
   }
 `;

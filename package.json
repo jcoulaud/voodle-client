@@ -16,6 +16,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "graphql": "^16.9.0",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.428.0",
     "next": "14.2.5",
     "next-auth": "^4.24.7",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.14",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.14.11",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18",

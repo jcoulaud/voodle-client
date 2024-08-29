@@ -5,7 +5,6 @@ import { Card } from '@/app/components/ui/Card';
 import { VERIFY_MAGIC_LINK } from '@/app/lib/graphql/mutations/auth';
 import { useMutation } from '@apollo/client';
 import { CheckCircle, XCircle } from 'lucide-react';
-import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
@@ -13,7 +12,8 @@ interface VerifyMagicLinkResponse {
   verifyMagicLink: {
     success: boolean;
     message: string;
-    session?: Record<string, unknown>;
+    accessToken?: string;
+    refreshToken?: string;
   };
 }
 
@@ -38,21 +38,12 @@ export default function VerifyPage() {
         });
 
         if (data?.verifyMagicLink.success) {
-          const result = await signIn('credentials', {
-            email,
-            token,
-            redirect: false,
-          });
-
-          if (result?.error) {
-            setError('Sign-in failed. Please try again.');
-          } else {
-            router.push('/dashboard');
-          }
+          router.push('/dashboard');
         } else {
           setError(data?.verifyMagicLink.message || 'Verification failed');
         }
       } catch (error) {
+        console.error('Verification error:', error);
         setError('Error during verification. Please try again.');
       } finally {
         setIsVerifying(false);
