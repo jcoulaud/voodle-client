@@ -16,26 +16,12 @@ export const StrategyCreation: React.FC = () => {
 
   const methods = useForm<StrategyFormData>({
     resolver: zodResolver(strategySchema),
+    mode: 'onChange',
     defaultValues: {
-      buy: { conditions: [], action: { type: 'fixedAmount', amount: 0 } },
+      buy: { conditions: [], action: { type: 'fixedAmount', amount: 1 } },
       sell: [],
     },
   });
-
-  const { handleSubmit } = methods;
-
-  const onSubmit = async (data: StrategyFormData) => {
-    try {
-      setError(null);
-      // Here you would typically send the data to your backend
-      console.log('Strategy submitted:', data);
-      // Simulating an API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // Handle success (e.g., show a success message, redirect, etc.)
-    } catch (err) {
-      setError('An error occurred while submitting the strategy. Please try again.');
-    }
-  };
 
   const nextStep = () => {
     const currentIndex = steps.indexOf(currentStep);
@@ -51,17 +37,29 @@ export const StrategyCreation: React.FC = () => {
     }
   };
 
+  const onSubmit = async (data: StrategyFormData) => {
+    try {
+      setError(null);
+      console.log('Strategy submitted:', data);
+      // TODO: call mutation to create strategy
+    } catch (err) {
+      setError('An error occurred while submitting the strategy. Please try again.');
+    }
+  };
+
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
+      <div className='space-y-8'>
         <StepIndicator steps={steps} currentStep={currentStep} />
 
         {currentStep === 'Buy Strategy' && <BuyStrategyStep onNext={nextStep} />}
-        {currentStep === 'Sell Strategy' && <SellStrategyStep />}
-        {currentStep === 'Review' && <ReviewStep />}
+        {currentStep === 'Sell Strategy' && (
+          <SellStrategyStep onPrev={prevStep} onNext={nextStep} />
+        )}
+        {currentStep === 'Review' && <ReviewStep onPrev={prevStep} onSubmit={onSubmit} />}
 
-        {error && <div className='text-error'>{error}</div>}
-      </form>
+        {error && <div className='text-red-500'>{error}</div>}
+      </div>
     </FormProvider>
   );
 };

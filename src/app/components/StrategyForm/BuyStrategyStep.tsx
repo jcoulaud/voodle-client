@@ -3,7 +3,7 @@ import { Check } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import ConditionModal from './ConditionModal';
-import { Condition, StrategyFormData, baseConditionSchema } from './strategySchema';
+import { BuyCondition, StrategyFormData, baseConditionSchema } from './strategySchema';
 
 interface BuyStrategyStepProps {
   onNext: () => void;
@@ -12,11 +12,13 @@ interface BuyStrategyStepProps {
 export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext }) => {
   const { control, watch, setValue, trigger } = useFormContext<StrategyFormData>();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentConditionType, setCurrentConditionType] = useState<Condition['type'] | null>(null);
-  console.log('currentConditionType', currentConditionType);
+  const [currentConditionType, setCurrentConditionType] = useState<BuyCondition['type'] | null>(
+    null,
+  );
 
-  const buyConditions = watch('buy.conditions') || [];
-  const investmentAmount = watch('buy.action.amount');
+  const buyData = watch('buy');
+  const buyConditions = buyData?.conditions || [];
+  const investmentAmount = buyData?.action?.amount;
 
   const conditionOptions = useMemo(() => {
     const types = baseConditionSchema.shape.type.options;
@@ -31,9 +33,8 @@ export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext }) => {
     }));
   }, []);
 
-  const handleConditionClick = (conditionType: Condition['type']) => {
+  const handleConditionClick = (conditionType: BuyCondition['type']) => {
     const existingCondition = buyConditions.find((c) => c.type === conditionType);
-    console.log('existingCondition', existingCondition);
 
     if (existingCondition) {
       setValue(
@@ -47,13 +48,11 @@ export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext }) => {
     }
   };
 
-  const handleSaveCondition = (condition: Condition) => {
-    console.log('handleSaveCondition', condition);
+  const handleSaveCondition = (condition: BuyCondition) => {
     const updatedConditions = [
       ...buyConditions.filter((c) => c.type !== condition.type),
       condition,
     ];
-    console.log('updatedConditions', updatedConditions);
 
     setValue('buy.conditions', updatedConditions, { shouldValidate: true });
     setIsModalOpen(false);
@@ -104,7 +103,7 @@ export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext }) => {
             return (
               <Button
                 key={option.value}
-                onClick={() => handleConditionClick(option.value)}
+                onClick={() => handleConditionClick(option.value as BuyCondition['type'])}
                 variant={isSelected ? 'dark' : 'secondary'}
                 size='lg'
                 className='justify-between h-14 text-base font-semibold w-full'>

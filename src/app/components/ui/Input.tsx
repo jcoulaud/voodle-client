@@ -1,15 +1,20 @@
 import { cn } from '@/lib/utils';
 import { Field, Label } from '@headlessui/react';
-import { ChangeEvent, forwardRef } from 'react';
+import React, { ChangeEvent, forwardRef } from 'react';
 
-export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> {
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   label?: string;
   description?: string;
   error?: string;
   currencySymbol?: string;
-  value?: string | number | [string | number, string | number];
-  onChange?: (value: string | number | [string | number, string | number]) => void;
+  onChange?: (
+    value:
+      | string
+      | number
+      | undefined
+      | [string | number, string | number]
+      | ChangeEvent<HTMLInputElement>,
+  ) => void;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -31,15 +36,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       if (onChange) {
         const inputValue = e.target.value;
-        if (Array.isArray(value)) {
-          // Handle array value for "between" operator
-          const newValue: [string | number, string | number] = [
-            type === 'number' && inputValue !== '' ? Number(inputValue) : inputValue,
-            value[1] || '',
-          ];
-          onChange(newValue);
+        if (type === 'number') {
+          if (inputValue === '') {
+            onChange('');
+          } else {
+            const numValue = parseFloat(inputValue);
+            onChange(isNaN(numValue) ? '' : numValue);
+          }
+        } else if (type === 'text') {
+          onChange(inputValue);
         } else {
-          onChange(type === 'number' && inputValue !== '' ? Number(inputValue) : inputValue);
+          onChange(e);
         }
       }
     };
@@ -68,13 +75,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               className,
             )}
             ref={ref}
-            value={Array.isArray(value) ? value[0] : value}
+            value={value}
             onChange={handleChange}
             {...props}
           />
         </div>
         {error && (
-          <p className='mt-2 text-sm text-red-600' id={`${id}-error`}>
+          <p className='mt-2 text-sm text-error' id={`${id}-error`}>
             {error}
           </p>
         )}

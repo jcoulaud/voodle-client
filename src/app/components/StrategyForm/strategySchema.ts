@@ -28,38 +28,54 @@ const blacklistConditionSchema = baseConditionSchema.extend({
   checkBlacklist: z.boolean(),
 });
 
-export const conditionSchema = z.discriminatedUnion('type', [
+export const buyConditionSchema = z.discriminatedUnion('type', [
   tokenNameConditionSchema,
   numericConditionSchema,
   ageConditionSchema,
   blacklistConditionSchema,
 ]);
 
-const buyActionSchema = z.discriminatedUnion('type', [
-  z.object({
-    type: z.literal('fixedAmount'),
-    amount: z.number().positive(),
-  }),
-]);
+const buyActionSchema = z.object({
+  type: z.literal('fixedAmount'),
+  amount: z.number().positive(),
+});
+
+const sellConditionSchema = z.object({
+  type: z.literal('price'),
+  operator: z.enum(['increasedBy', 'decreasedBy']),
+  value: z.number().min(0.1),
+});
+
+const sellActionSchema = z.object({
+  type: z.literal('percentageOfHoldings'),
+  amount: z
+    .preprocess(
+      (val) => (val === '' ? undefined : Number(val)),
+      z
+        .number()
+        .min(0.1, 'Sell percentage must be at least 0.1%')
+        .max(100, 'Sell percentage cannot exceed 100%')
+        .optional(),
+    )
+    .refine((val) => val !== undefined, 'Sell percentage must be at least 0.1%'),
+});
+
+const sellStrategySchema = z.object({
+  condition: sellConditionSchema,
+  action: sellActionSchema,
+});
 
 export const strategySchema = z.object({
-  buy: z.object({
-    conditions: z.array(conditionSchema).min(1, 'At least one condition is required'),
-    action: buyActionSchema,
-  }),
-  sell: z
-    .array(
-      z.object({
-        condition: z.enum(['priceIncrease', 'priceDecrease']),
-        percentage: z
-          .number()
-          .min(0, 'Percentage must be at least 0')
-          .max(100, 'Percentage cannot exceed 100'),
-      }),
-    )
-    .min(1, 'At least one sell condition is required'),
+  buy: z
+    .object({
+      conditions: z.array(buyConditionSchema).min(1, 'At least one buy condition is required'),
+      action: buyActionSchema,
+    })
+    .optional(),
+  sell: z.array(sellStrategySchema).min(1, 'At least one sell strategy is required').optional(),
 });
 
 export type StrategyFormData = z.infer<typeof strategySchema>;
 
-export type Condition = z.infer<typeof conditionSchema>;
+export type BuyCondition = z.infer<typeof buyConditionSchema>;
+export type SellStrategy = z.infer<typeof sellStrategySchema>;

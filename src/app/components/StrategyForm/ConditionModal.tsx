@@ -2,14 +2,14 @@ import { Checkbox, Dialog, Input, Select } from '@/app/components/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Condition, conditionSchema } from './strategySchema';
+import { BuyCondition, buyConditionSchema } from './strategySchema';
 
 interface ConditionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (condition: Condition) => void;
-  conditionType: Condition['type'];
-  initialCondition?: Condition;
+  onSave: (condition: BuyCondition) => void;
+  conditionType: BuyCondition['type'];
+  initialCondition?: BuyCondition;
 }
 
 const ConditionModal = memo<ConditionModalProps>(
@@ -20,8 +20,8 @@ const ConditionModal = memo<ConditionModalProps>(
       reset,
       watch,
       formState: { errors },
-    } = useForm<Condition>({
-      resolver: zodResolver(conditionSchema),
+    } = useForm<BuyCondition>({
+      resolver: zodResolver(buyConditionSchema),
       defaultValues: initialCondition || getDefaultCondition(conditionType),
     });
 
@@ -36,8 +36,7 @@ const ConditionModal = memo<ConditionModalProps>(
       }
     }, [isOpen, initialCondition, conditionType, reset]);
 
-    const onSubmit = (data: Condition) => {
-      console.log('onSubmit', data);
+    const onSubmit = (data: BuyCondition) => {
       onSave(data);
       onClose();
     };
@@ -233,7 +232,7 @@ export default ConditionModal;
  * HELPERS
  */
 
-function getConditionLabel(type: Condition['type']): string {
+function getConditionLabel(type: BuyCondition['type']): string {
   switch (type) {
     case 'tokenName':
       return 'Token Name';
@@ -250,7 +249,7 @@ function getConditionLabel(type: Condition['type']): string {
   }
 }
 
-function getDefaultCondition(type: Condition['type']): Condition {
+function getDefaultCondition(type: BuyCondition['type']): BuyCondition {
   switch (type) {
     case 'tokenName':
       return { type, operator: 'contains', value: '' };
