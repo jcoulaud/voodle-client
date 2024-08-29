@@ -20,6 +20,7 @@ const httpLink = new HttpLink({
 
 const authLink = setContext((_, { headers }) => {
   const accessToken = Cookies.get('accessToken');
+  console.log('accessToken', accessToken);
   return {
     headers: {
       ...headers,

@@ -1,9 +1,10 @@
 import { CREATE_STRATEGY } from '@/app/lib/graphql/mutations/strategy';
-import { useUser } from '@/hooks/useUser';
 import { useMutation } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { BuyStrategyStep } from './BuyStrategyStep';
 import { NameStrategyStep } from './NameStrategyStep';
 import { ReviewStep } from './ReviewStep';
@@ -17,9 +18,7 @@ type Step = (typeof steps)[number];
 export const StrategyCreation: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<Step>('Name');
   const [error, setError] = useState<string | null>(null);
-  const { user, isLoading } = useUser();
-  console.log('isLoading', isLoading);
-  console.log('user', user);
+  const router = useRouter();
 
   const [createStrategy] = useMutation(CREATE_STRATEGY);
 
@@ -51,22 +50,27 @@ export const StrategyCreation: React.FC = () => {
   };
 
   const onSubmit = async (data: StrategyFormData) => {
-    try {
-      setError(null);
-      const result = await createStrategy({
+    await toast.promise(
+      createStrategy({
         variables: {
           input: {
             name: data.name,
             strategy: { buy: data.buy, sell: data.sell },
           },
         },
-      });
-      console.log('Strategy created:', result.data.createStrategy);
-      // TODO: Show success message and redirect to strategy list
-    } catch (err) {
-      setError('An error occurred while submitting the strategy. Please try again.');
-      console.error('Error creating strategy:', err);
-    }
+      }),
+      {
+        loading: 'Creating strategy...',
+        success: (result) => {
+          router.push('/strategies');
+          return 'Strategy created successfully!';
+        },
+        error: (err) => {
+          console.error('Error creating strategy:', err);
+          return 'Failed to create strategy. Please try again.';
+        },
+      },
+    );
   };
 
   return (

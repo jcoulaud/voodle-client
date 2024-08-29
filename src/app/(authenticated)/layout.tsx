@@ -7,7 +7,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
   const { user } = useAuth();
 
   return (
-    <DashboardLayout userName={user?.name ?? 'User'} userEmail={user?.email ?? 'user@example.com'}>
+    <DashboardLayout userName={user?.username ?? ''} userEmail={user?.email ?? ''}>
       {children}
     </DashboardLayout>
   );

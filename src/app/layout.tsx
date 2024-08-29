@@ -1,4 +1,5 @@
 import { Inter } from 'next/font/google';
+import { Toaster } from 'react-hot-toast';
 import AppProviders from './providers/AppProviders';
 import './styles/globals.css';
 
@@ -13,7 +14,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='en' className='h-full'>
       <body className={inter.className}>
-        <AppProviders>{children}</AppProviders>
+        <AppProviders>
+          {children}
+          <Toaster position='top-center' />
+        </AppProviders>
       </body>
     </html>
   );
