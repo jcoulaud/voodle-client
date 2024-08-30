@@ -6,12 +6,12 @@ export class TokenService {
 
   static setTokens(tokens: { accessToken: string; refreshToken: string }): void {
     Cookies.set(this.ACCESS_TOKEN_KEY, tokens.accessToken, {
-      expires: 1 / 96, // 15 minutes
+      expires: undefined, // TODO: Set expiration
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
     });
     Cookies.set(this.REFRESH_TOKEN_KEY, tokens.refreshToken, {
-      expires: 7, // 7 days
+      expires: undefined, // TODO: Set expiration
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
     });
