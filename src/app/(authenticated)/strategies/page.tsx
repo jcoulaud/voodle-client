@@ -1,6 +1,6 @@
 'use client';
 
-import { Toggle } from '@/app/components/ui';
+import { LoadingSpinner, Toggle } from '@/app/components/ui';
 import { EDIT_STRATEGY } from '@/app/lib/graphql/mutations/strategy';
 import { GET_USER_STRATEGIES } from '@/app/lib/graphql/queries/strategy';
 import { UserStrategy } from '@/types';
@@ -14,9 +14,6 @@ export default function StrategiesPage() {
   const [showInactive, setShowInactive] = useState(false);
   const { loading, error, data, refetch } = useQuery(GET_USER_STRATEGIES);
   const [editStrategy] = useMutation(EDIT_STRATEGY);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
 
   const strategies = data?.userStrategies || [];
   const filteredStrategies = showInactive
@@ -58,6 +55,9 @@ export default function StrategiesPage() {
       },
     );
   };
+
+  if (loading) return <LoadingSpinner size={48} className='h-screen' />;
+  if (error) return <div className='text-red-500'>Error: {error.message}</div>;
 
   return (
     <div className='min-h-screen'>
