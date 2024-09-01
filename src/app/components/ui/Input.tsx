@@ -1,12 +1,13 @@
 import { cn } from '@/lib/utils';
 import { Field, Label } from '@headlessui/react';
-import React, { ChangeEvent, forwardRef } from 'react';
+import React, { ChangeEvent, forwardRef, useEffect, useState } from 'react';
 
 export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   label?: string;
   description?: string;
   error?: string;
   currencySymbol?: string;
+  initialValue?: string;
   onChange?: (
     value:
       | string
@@ -27,15 +28,26 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       type = 'text',
       currencySymbol,
       id,
-      value,
+      value: propValue,
+      initialValue,
       onChange,
       ...props
     },
     ref,
   ) => {
+    const [value, setValue] = useState(propValue ?? initialValue ?? '');
+
+    useEffect(() => {
+      if (propValue !== undefined) {
+        setValue(propValue);
+      }
+    }, [propValue]);
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      const inputValue = e.target.value;
+      setValue(inputValue);
+
       if (onChange) {
-        const inputValue = e.target.value;
         if (type === 'number') {
           if (inputValue === '') {
             onChange('');

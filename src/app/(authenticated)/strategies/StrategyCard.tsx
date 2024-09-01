@@ -1,4 +1,4 @@
-import { Badge } from '@/app/components/ui';
+import { Badge, Card, Dialog } from '@/app/components/ui';
 import {
   AgeCondition,
   BlacklistCondition,
@@ -6,12 +6,24 @@ import {
   SellCondition,
   SellStrategy,
   UserStrategy,
-} from '@/types/strategy'; // Update this import path as needed
-import { AlertCircle, BarChart2, Clock, DollarSign, Droplet, ShoppingCart } from 'lucide-react';
-import React from 'react';
+} from '@/types/strategy';
+import {
+  AlertCircle,
+  BarChart2,
+  Clock,
+  DollarSign,
+  Droplet,
+  Pause,
+  PenSquare,
+  Play,
+  ShoppingCart,
+} from 'lucide-react';
+import React, { useState } from 'react';
 
 interface StrategyCardProps {
   strategy: UserStrategy;
+  onPause: (id: number, isActive: boolean) => void;
+  onRename: (id: number, newName: string) => void;
 }
 
 const getIcon = (type: string) => {
@@ -169,25 +181,73 @@ const SellConditions: React.FC<{ strategies?: SellStrategy[] }> = ({ strategies 
   );
 };
 
-export const EnhancedStrategyCard: React.FC<StrategyCardProps> = ({ strategy }) => {
+export const StrategyCard: React.FC<StrategyCardProps> = ({ strategy, onPause, onRename }) => {
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+
+  const handleRenameClick = () => {
+    setIsRenameDialogOpen(true);
+  };
+
+  const handleRenameConfirm = (newName: string) => {
+    onRename(strategy.id, newName);
+    setIsRenameDialogOpen(false);
+  };
+
+  const handleToggleActive = () => {
+    onPause(strategy.id, !strategy.isActive);
+  };
+
+  const menuItems = [
+    {
+      label: strategy.isActive ? 'Pause' : 'Unpause',
+      icon: strategy.isActive ? <Pause className='h-5 w-5' /> : <Play className='h-5 w-5' />,
+      onClick: handleToggleActive,
+    },
+    {
+      label: 'Rename',
+      icon: <PenSquare className='h-5 w-5' />,
+      onClick: handleRenameClick,
+    },
+  ];
+
   return (
-    <div className='bg-white shadow overflow-hidden sm:rounded-lg'>
-      <div className='px-4 py-5 sm:px-6 flex justify-between items-center'>
-        <h2 className='text-lg leading-6 font-medium text-gray-900'>{strategy.name}</h2>
-        <Badge variant={strategy.isActive ? 'green' : 'gray'} rounded='md'>
-          {strategy.isActive ? 'Active' : 'Inactive'}
-        </Badge>
-      </div>
-      <div className='border-t border-gray-200 px-4 py-5 sm:p-0'>
-        <dl className='sm:divide-y sm:divide-gray-200'>
-          <div className='py-4 sm:py-5 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-6'>
-            <BuyConditions buy={strategy.strategyLogic.buy} />
-            <SellConditions strategies={strategy.strategyLogic.sell} />
-          </div>
-        </dl>
-      </div>
-    </div>
+    <>
+      <Card>
+        <Card.Header
+          title={strategy.name}
+          action={
+            <Badge variant={strategy.isActive ? 'green' : 'red'} rounded='md'>
+              {strategy.isActive ? 'Active' : 'Inactive'}
+            </Badge>
+          }
+          menu={{ items: menuItems }}
+        />
+        <Card.Content>
+          <BuyConditions buy={strategy.strategyLogic.buy} />
+          <SellConditions strategies={strategy.strategyLogic.sell} />
+        </Card.Content>
+      </Card>
+
+      <Dialog
+        open={isRenameDialogOpen}
+        onClose={() => setIsRenameDialogOpen(false)}
+        title='Rename Strategy'
+        description='Enter a new name for your strategy'
+        input={{
+          label: 'New Strategy Name',
+          initialValue: strategy.name,
+        }}
+        primaryAction={{
+          label: 'Rename',
+          onClick: handleRenameConfirm,
+        }}
+        secondaryAction={{
+          label: 'Cancel',
+          onClick: () => setIsRenameDialogOpen(false),
+        }}
+      />
+    </>
   );
 };
 
-export default EnhancedStrategyCard;
+export default StrategyCard;

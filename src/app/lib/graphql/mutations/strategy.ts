@@ -9,3 +9,13 @@ export const CREATE_STRATEGY = gql`
     }
   }
 `;
+
+export const EDIT_STRATEGY = gql`
+  mutation EditStrategy($input: EditStrategyInput!) {
+    editStrategy(input: $input) {
+      id
+      name
+      isActive
+    }
+  }
+`;
