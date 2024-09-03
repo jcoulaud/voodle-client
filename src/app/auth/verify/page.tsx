@@ -5,9 +5,9 @@ import { Card } from '@/app/components/ui/Card';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
-type VerificationStatus = 'verifying' | 'success' | 'error';
+type VerificationStatus = 'idle' | 'verifying' | 'success' | 'error';
 
 interface ErrorStateProps {
   error: string;
@@ -15,6 +15,7 @@ interface ErrorStateProps {
 }
 
 const VERIFICATION_STATES = {
+  IDLE: 'idle',
   VERIFYING: 'verifying',
   SUCCESS: 'success',
   ERROR: 'error',
@@ -33,36 +34,39 @@ const decodeEmail = (email: string): string => {
 const VerifyPage: FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<VerificationStatus>(VERIFICATION_STATES.VERIFYING);
+  const [status, setStatus] = useState<VerificationStatus>(VERIFICATION_STATES.IDLE);
   const [error, setError] = useState<string | null>(null);
   const { verifyMagicLink } = useAuth();
 
-  useEffect(() => {
-    const verifyToken = async () => {
-      const token = searchParams?.get('token');
-      const encodedEmail = searchParams?.get('email');
+  const verifyToken = useCallback(async () => {
+    const token = searchParams?.get('token');
+    const encodedEmail = searchParams?.get('email');
 
-      if (!token || !encodedEmail) {
-        setStatus(VERIFICATION_STATES.ERROR);
-        setError('Missing token or email in URL parameters.');
-        return;
-      }
+    if (!token || !encodedEmail) {
+      setStatus(VERIFICATION_STATES.ERROR);
+      setError('Missing token or email in URL parameters.');
+      return;
+    }
 
-      const email = decodeEmail(encodedEmail);
+    const email = decodeEmail(encodedEmail);
 
-      try {
-        await verifyMagicLink(token, email);
-        setStatus(VERIFICATION_STATES.SUCCESS);
-        setTimeout(() => router.push('/dashboard'), 2000);
-      } catch (err) {
-        console.error('Verification error:', err);
-        setStatus(VERIFICATION_STATES.ERROR);
-        setError('Error during verification. Please try again.');
-      }
-    };
-
-    verifyToken();
+    try {
+      setStatus(VERIFICATION_STATES.VERIFYING);
+      await verifyMagicLink(token, email);
+      setStatus(VERIFICATION_STATES.SUCCESS);
+      setTimeout(() => router.push('/dashboard'), 2000);
+    } catch (err) {
+      console.error('Verification error:', err);
+      setStatus(VERIFICATION_STATES.ERROR);
+      setError('Error during verification. Please try again.');
+    }
   }, [searchParams, router, verifyMagicLink]);
+
+  useEffect(() => {
+    if (status === VERIFICATION_STATES.IDLE) {
+      verifyToken();
+    }
+  }, [status, verifyToken]);
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-background text-text-body'>

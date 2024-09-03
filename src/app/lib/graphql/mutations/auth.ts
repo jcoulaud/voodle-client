@@ -3,8 +3,10 @@ import { gql } from '@apollo/client';
 export const SEND_MAGIC_LINK = gql`
   mutation SEND_MAGIC_LINK($email: String!) {
     sendMagicLink(email: $email) {
-      success
-      message
+      ... on AuthResultBase {
+        success
+        message
+      }
     }
   }
 `;
@@ -12,10 +14,19 @@ export const SEND_MAGIC_LINK = gql`
 export const VERIFY_MAGIC_LINK = gql`
   mutation VERIFY_MAGIC_LINK($token: String!, $email: String!) {
     verifyMagicLink(token: $token, email: $email) {
-      success
-      message
-      accessToken
-      refreshToken
+      ... on AuthResultBase {
+        success
+        message
+        accessToken
+        refreshToken
+      }
+      ... on AuthResultWithMnemonic {
+        success
+        message
+        accessToken
+        refreshToken
+        mnemonic
+      }
     }
   }
 `;

@@ -8,3 +8,9 @@ export const GET_USER_WALLETS = gql`
     }
   }
 `;
+
+export const GET_WALLET_PRIVATE_KEY = gql`
+  query GetWalletPrivateKey($address: String!) {
+    getWalletPrivateKey(address: $address)
+  }
+`;
