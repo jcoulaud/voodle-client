@@ -60,15 +60,21 @@ export default function StrategiesPage() {
   if (error) return <div className='text-red-500'>Error: {error.message}</div>;
 
   return (
-    <div className='min-h-screen'>
-      <div className='flex justify-between items-center mb-6'>
-        <h1 className='text-3xl font-bold'>My Strategies</h1>
-        <Toggle
-          enabled={showInactive}
-          setEnabled={setShowInactive}
-          label='Show Inactive Strategies'
-        />
+    <>
+      <div className='px-4 sm:px-0 mb-6'>
+        <h1 className='text-2xl font-semibold text-gray-900'>Strategies</h1>
+        <div className='mt-1 flex items-center justify-between'>
+          <p className='text-sm text-gray-600'>
+            See all your strategies here. You can pause or rename them at any time.
+          </p>
+          <Toggle
+            enabled={showInactive}
+            setEnabled={setShowInactive}
+            label='Show Inactive Strategies'
+          />
+        </div>
       </div>
+
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         <CreateNewStrategyCard />
         {filteredStrategies.map((strategy: UserStrategy) => (
@@ -80,6 +86,6 @@ export default function StrategiesPage() {
           />
         ))}
       </div>
-    </div>
+    </>
   );
 }

@@ -4,7 +4,7 @@ export const mainNavigation = [
 ];
 
 export const userNavigation = [
-  { name: 'Your Profile', href: '/profile' },
+  { name: 'Profile', href: '/profile' },
   { name: 'Settings', href: '/settings' },
   { name: 'Wallets', href: '/wallets' },
   { name: 'Sign out', href: '#' },

@@ -1,7 +1,7 @@
 'use client';
 
 import { Disclosure, DisclosureButton } from '@headlessui/react';
-import { Loader2, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 import MainMenu from './Header/MainMenu';
@@ -15,8 +15,6 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, userName, userEmail }: LayoutProps) {
-  const isLoading = !userName || !userEmail;
-
   return (
     <div className='min-h-full'>
       <Disclosure as='nav' className='border-b border-gray-200 bg-white'>
@@ -44,13 +42,7 @@ export default function Layout({ children, userName, userEmail }: LayoutProps) {
                   <MainMenu />
                 </div>
                 <div className='hidden sm:ml-6 sm:flex sm:items-center'>
-                  {isLoading ? (
-                    <div className='ml-3 flex items-center'>
-                      <Loader2 className='h-5 w-5 animate-spin text-gray-400' />
-                    </div>
-                  ) : (
-                    <UserMenu userName={userName} userEmail={userEmail} />
-                  )}
+                  <UserMenu userName={userName || ''} userEmail={userEmail || ''} />
                 </div>
                 <div className='-mr-2 flex items-center sm:hidden'>
                   <DisclosureButton className='relative inline-flex items-center justify-center rounded-md bg-background p-2 text-text-secondary hover:bg-background-dark hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'>
@@ -67,17 +59,7 @@ export default function Layout({ children, userName, userEmail }: LayoutProps) {
             </div>
 
             <Disclosure.Panel className='sm:hidden'>
-              {isLoading ? (
-                <div className='px-4 py-5 border-t border-gray-200'>
-                  <div className='flex items-center'>
-                    <div className='ml-3 flex items-center'>
-                      <Loader2 className='h-5 w-5 animate-spin text-gray-400' />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <MobileMenu userName={userName} userEmail={userEmail} />
-              )}
+              <MobileMenu userName={userName || ''} userEmail={userEmail || ''} />
             </Disclosure.Panel>
           </>
         )}

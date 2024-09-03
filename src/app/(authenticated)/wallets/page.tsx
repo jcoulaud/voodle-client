@@ -15,14 +15,20 @@ const WalletsPage: React.FC = () => {
   const wallets = data?.getUserWallets || [];
 
   return (
-    <div className='min-h-screen'>
-      <h1 className='text-3xl font-bold mb-6 text-gray-900'>My Wallets</h1>
+    <>
+      <div className='px-4 sm:px-0 mb-6'>
+        <h1 className='text-2xl font-semibold text-gray-900'>Wallet</h1>
+        <p className='mt-1 text-sm text-gray-600'>
+          Find all your personal wallets here (more blochains coming soon).
+        </p>
+      </div>
+
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         {wallets.map((wallet, index) => (
           <Wallet key={index} wallet={wallet} />
         ))}
       </div>
-    </div>
+    </>
   );
 };
 
