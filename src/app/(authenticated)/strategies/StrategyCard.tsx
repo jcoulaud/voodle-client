@@ -6,7 +6,7 @@ import {
   SellCondition,
   SellStrategy,
   UserStrategy,
-} from '@/types/strategy';
+} from '@/types';
 import {
   AlertCircle,
   BarChart2,
