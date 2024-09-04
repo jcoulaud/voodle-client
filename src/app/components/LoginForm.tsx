@@ -78,7 +78,7 @@ export default function LoginForm() {
         type='submit'
         disabled={isLoading}
         className='mt-4 w-full bg-primary text-background py-2 px-4 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed'>
-        {isLoading ? 'Sending...' : 'Sign In'}
+        {isLoading ? 'Sending...' : 'Receive sign-in link'}
       </button>
     </form>
   );
