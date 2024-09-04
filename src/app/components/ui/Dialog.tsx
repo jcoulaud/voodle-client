@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Dialog as HeadlessDialog, Transition, TransitionChild } from '@headlessui/react';
-import { AlertCircle, AlertTriangle, CheckCircle, Copy, Eye, EyeOff } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle, Copy, Eye, EyeOff, Loader2 } from 'lucide-react';
 import React, {
   ReactNode,
   forwardRef,
@@ -18,6 +18,8 @@ type DialogVariant = 'success' | 'info' | 'danger' | 'warning';
 type ActionProps<T extends boolean> = {
   label: string;
   onClick: T extends true ? (value: string) => void : () => void;
+  disabled?: boolean;
+  loading?: boolean;
 };
 
 interface DialogProps<T extends boolean> {
@@ -172,7 +174,6 @@ export const Dialog = forwardRef(
                       )}
                     </div>
                   </div>
-
                   {input && (
                     <div className='mt-4'>
                       <Input
@@ -182,7 +183,6 @@ export const Dialog = forwardRef(
                       />
                     </div>
                   )}
-
                   {children && (
                     <div className='mt-4'>
                       {React.Children.map(children, (child) => {
@@ -197,7 +197,7 @@ export const Dialog = forwardRef(
                                 className={cn(
                                   child.props.className,
                                   isBlurred ? 'filter blur-sm' : '',
-                                  'pr-20', // Add right padding for buttons
+                                  'pr-20',
                                 )}>
                                 {child.props.children}
                               </p>
@@ -233,8 +233,15 @@ export const Dialog = forwardRef(
                         <Button
                           variant={mapVariantToButtonVariant(variant)}
                           className='w-full sm:ml-3 sm:w-auto'
-                          onClick={handlePrimaryAction}>
-                          {primaryAction.label}
+                          onClick={handlePrimaryAction}
+                          disabled={primaryAction.disabled || primaryAction.loading}>
+                          {primaryAction.loading ? (
+                            <>
+                              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                            </>
+                          ) : (
+                            primaryAction.label
+                          )}
                         </Button>
                       )}
                       {secondaryAction && (

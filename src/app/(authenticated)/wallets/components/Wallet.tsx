@@ -1,11 +1,21 @@
-import { LoadingSpinner } from '@/app/components/ui';
+import { Button, Input, LoadingSpinner } from '@/app/components/ui';
 import { Card } from '@/app/components/ui/Card';
 import { Dialog } from '@/app/components/ui/Dialog';
+import { WALLET_WITHDRAW } from '@/app/lib/graphql/mutations/wallet';
 import { GET_WALLET_PRIVATE_KEY } from '@/app/lib/graphql/queries/wallet';
 import { useWalletBalance } from '@/hooks/useWalletBalance';
 import { Wallet as WalletType } from '@/types';
-import { useLazyQuery } from '@apollo/client';
-import { Copy, ExternalLink, Eye, EyeOff, Key, RefreshCw } from 'lucide-react';
+import { useLazyQuery, useMutation } from '@apollo/client';
+import {
+  ArrowUpRight,
+  Copy,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  Key,
+  RefreshCw,
+  WalletIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -18,6 +28,11 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
   const [isPrivateKeyDialogOpen, setIsPrivateKeyDialogOpen] = useState(false);
   const [privateKey, setPrivateKey] = useState<string | null>(null);
   const [showPrivateKey, setShowPrivateKey] = useState(false);
+  const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [destinationAddress, setDestinationAddress] = useState('');
+
+  const [withdrawFunds, { loading: isWithdrawing }] = useMutation(WALLET_WITHDRAW);
 
   const { balance, isLoadingBalance, refreshBalance } = useWalletBalance(wallet.address);
 
@@ -60,6 +75,50 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
     setShowPrivateKey(!showPrivateKey);
   };
 
+  const handleWithdraw = () => {
+    setIsWithdrawDialogOpen(true);
+  };
+
+  const handleWithdrawSubmit = async () => {
+    try {
+      await toast.promise(
+        withdrawFunds({
+          variables: {
+            fromAddress: wallet.address,
+            toAddress: destinationAddress,
+            amount: withdrawAmount.toString(),
+          },
+        }),
+        {
+          loading: 'Processing withdrawal...',
+          success: 'Withdrawal successful! This might take a couple of minutes to process.',
+          error: (error) => `Withdrawal failed: ${error}`,
+        },
+        {
+          success: {
+            duration: 10000,
+          },
+        },
+      );
+
+      setIsWithdrawDialogOpen(false);
+      refreshBalance();
+      setDestinationAddress('');
+      setWithdrawAmount('');
+    } catch (error) {}
+  };
+
+  const handleMaxAmount = () => {
+    setWithdrawAmount(balance || '0');
+  };
+
+  const isWithdrawDisabled = () => {
+    if (!destinationAddress || !withdrawAmount) return true;
+    const withdrawAmountNum = parseFloat(withdrawAmount);
+    const balanceNum = parseFloat(balance || '0');
+    return isNaN(withdrawAmountNum) || withdrawAmountNum <= 0 || withdrawAmountNum > balanceNum;
+  };
+
   return (
     <>
       <Card>
@@ -81,6 +140,11 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
                       console.warn(`Explorer not implemented for blockchain: ${wallet.blockchain}`);
                   }
                 },
+              },
+              {
+                label: 'Withdraw',
+                icon: <ArrowUpRight className='h-4 w-4' />,
+                onClick: handleWithdraw,
               },
               {
                 label: 'Show Private Key',
@@ -129,6 +193,48 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
           </div>
         </Card.Content>
       </Card>
+
+      <Dialog
+        open={isWithdrawDialogOpen}
+        onClose={() => setIsWithdrawDialogOpen(false)}
+        title='Withdraw Funds'
+        description={`Available balance: ${balance} TON`}
+        icon={<WalletIcon className='h-6 w-6 text-primary' />}
+        primaryAction={{
+          label: 'Withdraw',
+          onClick: handleWithdrawSubmit,
+          disabled: isWithdrawDisabled(),
+          loading: isWithdrawing,
+        }}
+        secondaryAction={{
+          label: 'Cancel',
+          onClick: () => setIsWithdrawDialogOpen(false),
+        }}>
+        <div className='space-y-4 mt-4'>
+          <Input
+            label='Destination Address'
+            value={destinationAddress}
+            onChange={(value) => setDestinationAddress(value as string)}
+            placeholder='Enter destination address'
+          />
+          <div className='relative'>
+            <Input
+              label='Amount'
+              type='number'
+              value={withdrawAmount}
+              onChange={(value) => setWithdrawAmount(value as string)}
+              placeholder='Enter amount to withdraw'
+            />
+            <Button
+              variant='ghost'
+              size='sm'
+              className='absolute right-1 top-[34px]'
+              onClick={handleMaxAmount}>
+              Max
+            </Button>
+          </div>
+        </div>
+      </Dialog>
 
       <Dialog
         open={isPrivateKeyDialogOpen}
