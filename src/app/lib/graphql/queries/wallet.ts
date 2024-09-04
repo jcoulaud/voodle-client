@@ -14,3 +14,9 @@ export const GET_WALLET_PRIVATE_KEY = gql`
     getWalletPrivateKey(address: $address)
   }
 `;
+
+export const GET_WALLET_BALANCE = gql`
+  query GetWalletBalance($address: String!) {
+    getWalletBalance(address: $address)
+  }
+`;

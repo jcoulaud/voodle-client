@@ -19,7 +19,7 @@ const WalletsPage: React.FC = () => {
       <div className='px-4 sm:px-0 mb-6'>
         <h1 className='text-2xl font-semibold text-gray-900'>Wallet</h1>
         <p className='mt-1 text-sm text-gray-600'>
-          Find all your personal wallets here (more blochains coming soon).
+          Find all your personal wallets here (more blockchains coming soon).
         </p>
       </div>
 
