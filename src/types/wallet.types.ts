@@ -8,3 +8,7 @@ export interface Wallet {
 export interface GetUserWalletsData {
   getUserWallets: Wallet[];
 }
+
+export interface GetWalletBalanceData {
+  getWalletBalance: string;
+}

@@ -98,13 +98,16 @@ const isBlacklistCondition = (
 const ConditionBadge: React.FC<{ condition: BuyCondition | SellCondition }> = ({ condition }) => {
   const renderValue = () => {
     if (isAgeCondition(condition)) {
-      return `$${condition.days} days`;
+      return `${condition.days} day${condition.days !== 1 ? 's' : ''}`;
     }
     if (isBlacklistCondition(condition)) {
       return `${condition.checkDollarSign ? '$' : ''}${condition.checkBlacklist ? 'BL' : ''}`;
     }
     if ('value' in condition) {
-      const addDollarSign = condition.type === 'marketCap' || condition.type === 'liquidity';
+      const addDollarSign =
+        condition.type === 'marketCap' ||
+        condition.type === 'liquidity' ||
+        condition.type === 'price';
       if (Array.isArray(condition.value)) {
         return `${addDollarSign ? '$' : ''}${condition.value[0]} - ${addDollarSign ? '$' : ''}${
           condition.value[1]

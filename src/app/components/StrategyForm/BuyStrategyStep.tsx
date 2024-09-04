@@ -11,7 +11,13 @@ interface BuyStrategyStepProps {
 }
 
 export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext, onPrev }) => {
-  const { control, watch, setValue, trigger } = useFormContext<StrategyFormData>();
+  const {
+    control,
+    watch,
+    setValue,
+    trigger,
+    formState: { errors },
+  } = useFormContext<StrategyFormData>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentConditionType, setCurrentConditionType] = useState<BuyCondition['type'] | null>(
     null,
@@ -90,7 +96,7 @@ export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext, onPrev
                   field.onChange(cleanedValue === '' ? '' : Number(cleanedValue));
                 }
               }}
-              value={field.value === 0 ? '' : field.value}
+              error={errors.buy?.action?.amount?.message}
             />
           )}
         />

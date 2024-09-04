@@ -8,14 +8,7 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   error?: string;
   currencySymbol?: string;
   initialValue?: string;
-  onChange?: (
-    value:
-      | string
-      | number
-      | undefined
-      | [string | number, string | number]
-      | ChangeEvent<HTMLInputElement>,
-  ) => void;
+  onChange?: (value: string | number | undefined) => void;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -50,15 +43,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       if (onChange) {
         if (type === 'number') {
           if (inputValue === '') {
-            onChange('');
+            onChange(undefined);
           } else {
             const numValue = parseFloat(inputValue);
-            onChange(isNaN(numValue) ? '' : numValue);
+            onChange(isNaN(numValue) ? undefined : numValue);
           }
-        } else if (type === 'text') {
-          onChange(inputValue);
         } else {
-          onChange(e);
+          onChange(inputValue);
         }
       }
     };

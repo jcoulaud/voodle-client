@@ -207,6 +207,7 @@ const ConditionModal = memo<ConditionModalProps>(
       <Dialog
         open={isOpen}
         onClose={onClose}
+        variant='info'
         title={`${getConditionLabel(conditionType)} Condition`}
         primaryAction={{
           label: 'Save Condition',

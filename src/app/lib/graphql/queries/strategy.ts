@@ -7,6 +7,7 @@ export const GET_USER_STRATEGIES = gql`
       name
       isActive
       strategyLogic
+      maxBetAmount
     }
   }
 `;

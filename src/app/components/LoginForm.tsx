@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Input } from './ui/Input';
 
@@ -19,14 +19,14 @@ export default function LoginForm() {
   const [success, setSuccess] = useState(false);
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     setIsLoading(true);
     setError(null);
 
@@ -60,13 +60,18 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='w-full max-w-md'>
-      <Input
-        {...register('email')}
-        type='email'
-        id='email'
+      <Controller
         name='email'
-        placeholder='Enter your email'
-        error={errors.email?.message}
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            type='email'
+            id='email'
+            placeholder='Enter your email'
+            error={errors.email?.message}
+          />
+        )}
       />
       {error && <p className='mt-2 text-sm text-error'>{error}</p>}
       <button

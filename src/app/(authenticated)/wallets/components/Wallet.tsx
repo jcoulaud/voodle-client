@@ -1,11 +1,12 @@
 import { LoadingSpinner } from '@/app/components/ui';
 import { Card } from '@/app/components/ui/Card';
 import { Dialog } from '@/app/components/ui/Dialog';
-import { GET_WALLET_BALANCE, GET_WALLET_PRIVATE_KEY } from '@/app/lib/graphql/queries/wallet';
+import { GET_WALLET_PRIVATE_KEY } from '@/app/lib/graphql/queries/wallet';
+import { useWalletBalance } from '@/hooks/useWalletBalance';
 import { Wallet as WalletType } from '@/types';
 import { useLazyQuery } from '@apollo/client';
 import { Copy, ExternalLink, Eye, EyeOff, Key, RefreshCw } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface WalletCardProps {
@@ -17,7 +18,8 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
   const [isPrivateKeyDialogOpen, setIsPrivateKeyDialogOpen] = useState(false);
   const [privateKey, setPrivateKey] = useState<string | null>(null);
   const [showPrivateKey, setShowPrivateKey] = useState(false);
-  const [balance, setBalance] = useState<string | null>(null);
+
+  const { balance, isLoadingBalance, refreshBalance } = useWalletBalance(wallet.address);
 
   const [getWalletPrivateKey, { loading: privateKeyLoading }] = useLazyQuery(
     GET_WALLET_PRIVATE_KEY,
@@ -26,21 +28,6 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
       onCompleted: (data) => setPrivateKey(data.getWalletPrivateKey),
     },
   );
-
-  const [getWalletBalance, { loading: isLoadingBalance }] = useLazyQuery(GET_WALLET_BALANCE, {
-    variables: { address: wallet.address },
-    fetchPolicy: 'network-only',
-    onCompleted: (data) => setBalance(data.getWalletBalance),
-  });
-
-  useEffect(() => {
-    const fetchBalance = () => {
-      getWalletBalance();
-    };
-    fetchBalance();
-    const intervalId = setInterval(fetchBalance, 30000);
-    return () => clearInterval(intervalId);
-  }, [getWalletBalance]);
 
   const handleCopyAddress = () => {
     navigator.clipboard
@@ -129,14 +116,10 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
               <Card.Description>Balance</Card.Description>
               <div className='mt-1 flex items-center space-x-2'>
                 <div className='flex-1 bg-gray-100 rounded p-2 font-mono text-sm min-h-[2.5rem] flex items-center'>
-                  {isLoadingBalance ? (
-                    <LoadingSpinner size={20} />
-                  ) : (
-                    `${formatBalance(balance, 9)} TON`
-                  )}
+                  {isLoadingBalance ? <LoadingSpinner size={20} /> : `${balance} TON`}
                 </div>
                 <button
-                  onClick={() => getWalletBalance()}
+                  onClick={refreshBalance}
                   className='p-2 text-gray-500 hover:text-gray-700'
                   disabled={isLoadingBalance}>
                   <RefreshCw className={`h-5 w-5 ${isLoadingBalance ? 'animate-spin' : ''}`} />
@@ -199,16 +182,4 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
       </Dialog>
     </>
   );
-};
-
-/*
-Helper function to format balance
-*/
-
-const formatBalance = (balance: string | null, decimals: number): string => {
-  if (balance === null) return 'N/A';
-  const balanceNum = parseFloat(balance);
-  if (isNaN(balanceNum)) return 'Invalid';
-  const formattedBalance = (balanceNum / Math.pow(10, decimals)).toFixed(4);
-  return parseFloat(formattedBalance).toString();
 };

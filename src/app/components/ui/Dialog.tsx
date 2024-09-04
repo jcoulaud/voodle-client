@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Dialog as HeadlessDialog, Transition, TransitionChild } from '@headlessui/react';
-import { AlertCircle, AlertTriangle, CheckCircle, Copy, Eye, EyeOff, Info } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle, Copy, Eye, EyeOff } from 'lucide-react';
 import React, {
   ReactNode,
   forwardRef,
@@ -56,8 +56,6 @@ const mapVariantToIcon = (variant: DialogVariant): ReactNode => {
       return <AlertTriangle className='h-6 w-6 text-yellow-600' aria-hidden='true' />;
     case 'success':
       return <CheckCircle className='h-6 w-6 text-green-600' aria-hidden='true' />;
-    case 'info':
-      return <Info className='h-6 w-6 text-blue-600' aria-hidden='true' />;
     case 'danger':
       return <AlertCircle className='h-6 w-6 text-red-600' aria-hidden='true' />;
     default:
@@ -151,18 +149,17 @@ export const Dialog = forwardRef(
                     {mapVariantToIcon(variant) && (
                       <div
                         className={cn(
-                          'mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10',
+                          'mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10 sm:mr-4',
                           {
                             'bg-yellow-100': variant === 'warning',
                             'bg-green-100': variant === 'success',
-                            'bg-blue-100': variant === 'info',
                             'bg-red-100': variant === 'danger',
                           },
                         )}>
                         {mapVariantToIcon(variant)}
                       </div>
                     )}
-                    <div className='mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left'>
+                    <div className='mt-3 text-center sm:mt-0 sm:text-left'>
                       <HeadlessDialog.Title
                         as='h3'
                         className='text-base font-semibold leading-6 text-gray-900'>

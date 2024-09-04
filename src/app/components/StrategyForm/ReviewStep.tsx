@@ -15,28 +15,35 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ onPrev, onSubmit }) => {
   const handleFormSubmit = handleSubmit(onSubmit);
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-8'>
       <h2 className='text-2xl font-bold'>Review Your Strategy</h2>
 
       <div>
-        <h3 className='text-lg font-semibold'>Name</h3>
-        <p>{formData.name}</p>
+        <h3 className='text-lg font-semibold mb-2'>Settings</h3>
+        <p>
+          <strong>Name:</strong> {formData.name}
+        </p>
+        <p>
+          <strong>Max Bet Amount:</strong> ${formData.maxBetAmount}
+        </p>
       </div>
 
       <div>
-        <h3 className='text-lg font-semibold'>Buy Conditions</h3>
-        <p>Investment Amount: ${formData.buy?.action.amount}</p>
+        <h3 className='text-lg font-semibold mb-2'>Buy Conditions</h3>
+        <p>
+          <strong>Investment Amount:</strong> ${formData.buy?.action.amount}
+        </p>
         <ul>
           {formData.buy?.conditions.map((condition, index) => (
             <li key={index}>
-              {condition.type}: {JSON.stringify(condition)}
+              <strong>{condition.type}:</strong> {JSON.stringify(condition)}
             </li>
           ))}
         </ul>
       </div>
 
       <div>
-        <h3 className='text-lg font-semibold'>Sell Conditions</h3>
+        <h3 className='text-lg font-semibold mb-2'>Sell Conditions</h3>
         {formData.sell?.map((strategy, index) => (
           <div key={index}>
             <p>

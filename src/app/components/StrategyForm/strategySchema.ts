@@ -65,16 +65,27 @@ const sellStrategySchema = z.object({
   action: sellActionSchema,
 });
 
-export const strategySchema = z.object({
-  name: z.string().min(3, 'Strategy name must be at least 3 characters long'),
-  buy: z
-    .object({
-      conditions: z.array(buyConditionSchema).min(1, 'At least one buy condition is required'),
-      action: buyActionSchema,
-    })
-    .optional(),
-  sell: z.array(sellStrategySchema).min(1, 'At least one sell strategy is required').optional(),
-});
+export const strategySchema = z
+  .object({
+    name: z.string().min(3, 'Strategy name must be at least 3 characters long'),
+    maxBetAmount: z.number().positive('Max bet amount must be positive'),
+    buy: z
+      .object({
+        conditions: z.array(buyConditionSchema).min(1, 'At least one buy condition is required'),
+        action: buyActionSchema,
+      })
+      .optional(),
+    sell: z.array(sellStrategySchema).min(1, 'At least one sell strategy is required').optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.buy && data.buy.action.amount > data.maxBetAmount) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Buy amount cannot exceed the maximum bet amount of $${data.maxBetAmount}`,
+        path: ['buy', 'action', 'amount'],
+      });
+    }
+  });
 
 export type StrategyFormData = z.infer<typeof strategySchema>;
 
