@@ -1,18 +1,19 @@
 'use client';
 
 import { LoadingSpinner } from '@/app/components/ui';
-import { GET_USER_WALLETS } from '@/app/lib/graphql/queries/wallet';
-import { GetUserWalletsData } from '@/types';
-import { useQuery } from '@apollo/client';
+import { useUserWallets } from '@/hooks/useUserWallets';
+import toast from 'react-hot-toast';
 import { Wallet } from './components/Wallet';
 
 const WalletsPage: React.FC = () => {
-  const { data, loading, error } = useQuery<GetUserWalletsData>(GET_USER_WALLETS);
+  const { wallets, isLoading: isLoadingWallets, error } = useUserWallets();
 
-  if (loading) return <LoadingSpinner size={48} className='h-screen' />;
-  if (error) return <p className='text-red-500'>Error: {error.message}</p>;
+  if (isLoadingWallets) return <LoadingSpinner size={48} className='h-screen' />;
 
-  const wallets = data?.getUserWallets || [];
+  if (error) {
+    toast.error(`Error: ${error}`);
+    return null;
+  }
 
   return (
     <>

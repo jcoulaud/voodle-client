@@ -1,20 +1,28 @@
 'use client';
 
+import { useUserWallets } from '@/hooks/useUserWallets';
+import { useWalletBalance } from '@/hooks/useWalletBalance';
 import { Disclosure, DisclosureButton } from '@headlessui/react';
-import { Menu, X } from 'lucide-react';
+import { Menu, Wallet, X } from 'lucide-react';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 import MainMenu from './Header/MainMenu';
 import MobileMenu from './Header/MobileMenu';
 import UserMenu from './Header/UserMenu';
+import { LoadingSpinner } from './ui';
 
 interface LayoutProps {
   children: ReactNode;
   userName: string | null | undefined;
   userEmail: string | null | undefined;
+  walletAddress: string;
 }
 
 export default function Layout({ children, userName, userEmail }: LayoutProps) {
+  const { wallets, isLoading: isLoadingWallets } = useUserWallets();
+  const primaryWalletAddress = wallets?.[0]?.address ?? '';
+  const { balance, isLoadingBalance } = useWalletBalance(primaryWalletAddress);
+
   return (
     <div className='min-h-full'>
       <Disclosure as='nav' className='border-b border-gray-200 bg-white'>
@@ -42,6 +50,16 @@ export default function Layout({ children, userName, userEmail }: LayoutProps) {
                   <MainMenu />
                 </div>
                 <div className='hidden sm:ml-6 sm:flex sm:items-center'>
+                  <div className='flex items-center ml-4'>
+                    <div className='flex items-center mr-4 text-xs text-text-body'>
+                      <Wallet className='h-4 w-4 mr-1' />
+                      {isLoadingWallets || isLoadingBalance ? (
+                        <LoadingSpinner size={16} />
+                      ) : (
+                        <span>{Number(balance).toFixed(2)} TON</span>
+                      )}
+                    </div>
+                  </div>
                   <UserMenu userName={userName || ''} userEmail={userEmail || ''} />
                 </div>
                 <div className='-mr-2 flex items-center sm:hidden'>
