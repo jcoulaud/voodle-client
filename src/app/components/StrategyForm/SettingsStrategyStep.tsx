@@ -15,6 +15,7 @@ export const SettingsStrategyStep: React.FC<{ onNext: () => void }> = memo(({ on
   } = useFormContext<StrategyFormData>();
 
   const maxBetAmount = watch('maxBetAmount');
+  const strategyName = watch('name');
 
   const { data: walletsData } = useQuery<GetUserWalletsData>(GET_USER_WALLETS);
 
@@ -64,7 +65,7 @@ export const SettingsStrategyStep: React.FC<{ onNext: () => void }> = memo(({ on
         type='button'
         onClick={onNext}
         variant='primary'
-        disabled={!isMaxBetAmountValid || balance === null}>
+        disabled={!isMaxBetAmountValid || !strategyName || balance === null}>
         Next: Buy Strategy
       </Button>
     </div>
