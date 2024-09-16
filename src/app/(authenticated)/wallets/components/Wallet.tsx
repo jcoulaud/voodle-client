@@ -134,7 +134,7 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
                 onClick: () => {
                   switch (wallet.blockchain) {
                     case 'ton':
-                      window.open(`https://tonscan.org/address/${wallet.address}`, '_blank');
+                      window.open(`https://tonviewer.com/${wallet.address}`, '_blank');
                       break;
                     default:
                       console.warn(`Explorer not implemented for blockchain: ${wallet.blockchain}`);

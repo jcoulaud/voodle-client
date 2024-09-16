@@ -84,7 +84,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
                   </td>
                   <td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 w-10'>
                     <a
-                      href={`https://explorer.ton.org/transaction/${transaction.id}`}
+                      href={`https://tonviewer.com/transaction/${transaction.id}`}
                       target='_blank'
                       rel='noopener noreferrer'
                       className='text-gray-400 hover:text-gray-600'>
