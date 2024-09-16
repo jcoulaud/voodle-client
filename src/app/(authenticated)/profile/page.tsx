@@ -1,6 +1,6 @@
 'use client';
 
-import { LoadingSpinner } from '@/app/components/ui';
+import { LoadingSpinner, PageHeader } from '@/app/components/ui';
 import { Button } from '@/app/components/ui/Button';
 import { Input } from '@/app/components/ui/Input';
 import { EDIT_USER, ME } from '@/app/lib/graphql/queries/user';
@@ -43,12 +43,11 @@ export default function ProfilePage() {
 
   return (
     <>
-      <div className='px-4 sm:px-0'>
-        <h1 className='text-2xl font-semibold text-text-title'>Profile</h1>
-        <p className='mt-1 text-sm text-gray-600'>
-          Manage your personal information and account settings.
-        </p>
-      </div>
+      <PageHeader
+        title='Profile'
+        description='Manage your personal information and account settings.'
+      />
+
       <div className='mt-6 border-t border-gray-100'>
         <dl className='divide-y divide-gray-100'>
           <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>

@@ -1,6 +1,6 @@
 'use client';
 
-import { LoadingSpinner, Toggle } from '@/app/components/ui';
+import { LoadingSpinner, PageHeader, Toggle } from '@/app/components/ui';
 import { EDIT_STRATEGY } from '@/app/lib/graphql/mutations/strategy';
 import { GET_USER_STRATEGIES } from '@/app/lib/graphql/queries/strategy';
 import { UserStrategy } from '@/types';
@@ -61,19 +61,17 @@ export default function StrategiesPage() {
 
   return (
     <>
-      <div className='px-4 sm:px-0 mb-6'>
-        <h1 className='text-2xl font-semibold text-text-title'>Strategies</h1>
-        <div className='mt-1 flex items-center justify-between'>
-          <p className='text-sm text-gray-600'>
-            See all your strategies here. You can pause or rename them at any time.
-          </p>
+      <PageHeader
+        title='Strategies'
+        description='See all your strategies here. You can pause or rename them at any time.'
+        rightAction={
           <Toggle
             enabled={showInactive}
             setEnabled={setShowInactive}
             label='Show Inactive Strategies'
           />
-        </div>
-      </div>
+        }
+      />
 
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         <CreateNewStrategyCard />

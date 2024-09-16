@@ -1,6 +1,6 @@
 'use client';
 
-import { LoadingSpinner, Pagination } from '@/app/components/ui';
+import { LoadingSpinner, PageHeader, Pagination } from '@/app/components/ui';
 import { GET_USER_TRANSACTIONS } from '@/app/lib/graphql/queries/transaction';
 import { useQuery } from '@apollo/client';
 import { useState } from 'react';
@@ -25,12 +25,10 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className='px-4 sm:px-0 mb-6'>
-        <h1 className='text-2xl font-semibold text-text-title'>Transaction History</h1>
-        <div className='mt-1 flex items-center justify-between'>
-          <p className='text-sm text-gray-600'>All the transactions executed by your strategies.</p>
-        </div>
-      </div>
+      <PageHeader
+        title='Transaction History'
+        description='All the transactions executed by your strategies.'
+      />
 
       <div>
         <TransactionTable transactions={transactions} />

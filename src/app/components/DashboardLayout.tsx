@@ -15,7 +15,6 @@ interface LayoutProps {
   children: ReactNode;
   userName: string | null | undefined;
   userEmail: string | null | undefined;
-  walletAddress: string;
 }
 
 export default function Layout({ children, userName, userEmail }: LayoutProps) {

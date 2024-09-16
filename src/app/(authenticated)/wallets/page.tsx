@@ -1,6 +1,6 @@
 'use client';
 
-import { LoadingSpinner } from '@/app/components/ui';
+import { LoadingSpinner, PageHeader } from '@/app/components/ui';
 import { useUserWallets } from '@/hooks/useUserWallets';
 import toast from 'react-hot-toast';
 import { Wallet } from './components/Wallet';
@@ -17,12 +17,10 @@ const WalletsPage: React.FC = () => {
 
   return (
     <>
-      <div className='px-4 sm:px-0 mb-6'>
-        <h1 className='text-2xl font-semibold text-text-title'>Wallet</h1>
-        <p className='mt-1 text-sm text-gray-600'>
-          Find all your personal wallets here (more blockchains coming soon).
-        </p>
-      </div>
+      <PageHeader
+        title='Wallet'
+        description='Find all your personal wallets here (more blockchains coming soon).'
+      />
 
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         {wallets.map((wallet, index) => (
