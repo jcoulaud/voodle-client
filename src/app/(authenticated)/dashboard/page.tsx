@@ -37,7 +37,7 @@ export default function Dashboard() {
     pollInterval: POLL_INTERVAL,
   });
 
-  if (isLoadingWallets || isLoadingTransactions || isLoadingBalance) return <LoadingSpinner />;
+  if (isLoadingTransactions) return <LoadingSpinner />;
 
   if (errorWallets || errorTransactions) {
     toast.error(`Error: ${errorWallets || errorTransactions}`);
