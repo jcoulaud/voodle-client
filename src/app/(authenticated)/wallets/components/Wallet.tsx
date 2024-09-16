@@ -7,7 +7,6 @@ import { useWalletBalance } from '@/hooks/useWalletBalance';
 import { Wallet as WalletType } from '@/types';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import {
-  ArrowUpRight,
   Copy,
   ExternalLink,
   Eye,
@@ -15,6 +14,7 @@ import {
   Key,
   RefreshCw,
   WalletIcon,
+  WalletMinimalIcon,
 } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -143,7 +143,7 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
               },
               {
                 label: 'Withdraw',
-                icon: <ArrowUpRight className='h-4 w-4' />,
+                icon: <WalletMinimalIcon className='h-4 w-4' />,
                 onClick: handleWithdraw,
               },
               {
