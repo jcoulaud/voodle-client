@@ -145,7 +145,7 @@ const BuyConditions: React.FC<{
 
   return (
     <div className='mt-4'>
-      <h3 className='text-base font-medium text-gray-900'>Buy Conditions</h3>
+      <h3 className='text-base font-medium text-text-title'>Buy Conditions</h3>
       <div className='mt-2 flex flex-wrap w-full'>
         {buy.conditions.map((condition, index) => (
           <ConditionBadge key={index} condition={condition} />
@@ -166,7 +166,7 @@ const SellConditions: React.FC<{ strategies?: SellStrategy[] }> = ({ strategies 
 
   return (
     <div className='mt-4'>
-      <h3 className='text-base font-medium text-gray-900'>Sell Conditions</h3>
+      <h3 className='text-base font-medium text-text-title'>Sell Conditions</h3>
       <div className='mt-2'>
         {strategies.map((strategy, index) => (
           <div key={index} className='flex items-start mb-2'>

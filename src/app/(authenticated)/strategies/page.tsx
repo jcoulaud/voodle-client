@@ -62,7 +62,7 @@ export default function StrategiesPage() {
   return (
     <>
       <div className='px-4 sm:px-0 mb-6'>
-        <h1 className='text-2xl font-semibold text-gray-900'>Strategies</h1>
+        <h1 className='text-2xl font-semibold text-text-title'>Strategies</h1>
         <div className='mt-1 flex items-center justify-between'>
           <p className='text-sm text-gray-600'>
             See all your strategies here. You can pause or rename them at any time.

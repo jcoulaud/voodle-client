@@ -164,12 +164,12 @@ export const Dialog = forwardRef(
                     <div className='mt-3 text-center sm:mt-0 sm:text-left'>
                       <HeadlessDialog.Title
                         as='h3'
-                        className='text-base font-semibold leading-6 text-gray-900'>
+                        className='text-base font-semibold leading-6 text-text-title'>
                         {title}
                       </HeadlessDialog.Title>
                       {description && (
                         <div className='mt-2'>
-                          <p className='text-sm text-gray-500'>{description}</p>
+                          <p className='text-sm text-text-body'>{description}</p>
                         </div>
                       )}
                     </div>

@@ -44,7 +44,7 @@ export default function ProfilePage() {
   return (
     <>
       <div className='px-4 sm:px-0'>
-        <h1 className='text-2xl font-semibold text-gray-900'>Profile</h1>
+        <h1 className='text-2xl font-semibold text-text-title'>Profile</h1>
         <p className='mt-1 text-sm text-gray-600'>
           Manage your personal information and account settings.
         </p>
@@ -92,7 +92,7 @@ export default function ProfilePage() {
             </dd>
           </div>
           <div className='px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0'>
-            <dt className='text-sm font-medium leading-6 text-gray-900 sm:pt-2'>Email address</dt>
+            <dt className='text-sm font-medium leading-6 text-text-title sm:pt-2'>Email address</dt>
             <dd className='mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 sm:pt-2'>
               {user.email}
             </dd>

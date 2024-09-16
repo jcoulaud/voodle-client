@@ -74,10 +74,10 @@ export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext, onPrev
 
   return (
     <div className='space-y-6'>
-      <h2 className='text-2xl font-semibold text-gray-900'>Buy Strategy</h2>
+      <h2 className='text-2xl font-semibold text-text-title'>Buy Strategy</h2>
 
       <div className='space-y-4'>
-        <h3 className='text-lg font-medium text-gray-900'>Investment Amount</h3>
+        <h3 className='text-lg font-medium text-text-title'>Investment Amount</h3>
         <Controller
           name='buy.action.amount'
           control={control}
@@ -103,7 +103,7 @@ export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext, onPrev
       </div>
 
       <div className='space-y-4'>
-        <h3 className='text-lg font-medium text-gray-900'>Conditions</h3>
+        <h3 className='text-lg font-medium text-text-title'>Conditions</h3>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
           {conditionOptions.map((option) => {
             const isSelected = buyConditions.some((c) => c.type === option.value);

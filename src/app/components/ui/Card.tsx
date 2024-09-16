@@ -50,7 +50,7 @@ const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
       )}
       {...props}>
       <div className='flex-1 min-w-0'>
-        <h3 className='text-lg font-medium leading-6 text-gray-900 truncate'>{title}</h3>
+        <h3 className='text-lg font-medium leading-6 text-text-title truncate'>{title}</h3>
       </div>
       <div className='flex items-center space-x-2 flex-shrink-0'>
         {action}
@@ -70,7 +70,7 @@ const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
                       <button
                         onClick={item.onClick}
                         className={cn(
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          active ? 'bg-gray-100 text-text-title' : 'text-gray-700',
                           'flex w-full px-4 py-2 text-sm',
                         )}>
                         {item.icon && (

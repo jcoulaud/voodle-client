@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^3.9.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "date-fns": "^3.6.0",
     "graphql": "^16.9.0",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.428.0",

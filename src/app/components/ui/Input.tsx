@@ -57,14 +57,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <Field className='w-full'>
         {label && (
-          <Label htmlFor={id} className='block text-sm font-medium leading-6 text-gray-900 mb-2'>
+          <Label htmlFor={id} className='block text-sm font-medium leading-6 text-text-title mb-2'>
             {label}
           </Label>
         )}
         <div className='relative'>
           {currencySymbol && (
             <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
-              <span className='text-gray-500 sm:text-sm'>{currencySymbol}</span>
+              <span className='text-text-body sm:text-sm'>{currencySymbol}</span>
             </div>
           )}
           <input

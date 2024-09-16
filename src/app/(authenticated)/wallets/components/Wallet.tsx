@@ -166,12 +166,12 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
                 </div>
                 <button
                   onClick={() => setShowFullAddress(!showFullAddress)}
-                  className='p-2 text-gray-500 hover:text-gray-700 flex-shrink-0'>
+                  className='p-2 text-text-body hover:text-gray-700 flex-shrink-0'>
                   {showFullAddress ? <EyeOff className='h-5 w-5' /> : <Eye className='h-5 w-5' />}
                 </button>
                 <button
                   onClick={handleCopyAddress}
-                  className='p-2 text-gray-500 hover:text-gray-700 flex-shrink-0'>
+                  className='p-2 text-text-body hover:text-gray-700 flex-shrink-0'>
                   <Copy className='h-5 w-5' />
                 </button>
               </div>
@@ -184,7 +184,7 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
                 </div>
                 <button
                   onClick={refreshBalance}
-                  className='p-2 text-gray-500 hover:text-gray-700'
+                  className='p-2 text-text-body hover:text-gray-700'
                   disabled={isLoadingBalance}>
                   <RefreshCw className={`h-5 w-5 ${isLoadingBalance ? 'animate-spin' : ''}`} />
                 </button>
@@ -256,7 +256,7 @@ export const Wallet: React.FC<WalletCardProps> = ({ wallet }) => {
         {privateKeyLoading && <p>Loading private key...</p>}
         {privateKey && (
           <div className='mt-4'>
-            <p className='text-sm font-medium text-gray-900'>Private Key:</p>
+            <p className='text-sm font-medium text-text-title'>Private Key:</p>
             <div className='relative mt-2'>
               <div className='bg-gray-100 rounded p-2 pr-20 overflow-hidden'>
                 <p
