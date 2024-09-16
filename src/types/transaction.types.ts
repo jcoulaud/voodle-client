@@ -21,4 +21,5 @@ export interface Transaction {
   price_in_usd: string;
   dex: string;
   status: TransactionStatus;
+  transaction_id?: string;
 }

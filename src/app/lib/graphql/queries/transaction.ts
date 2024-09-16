@@ -11,6 +11,7 @@ export const GET_USER_TRANSACTIONS = gql`
         price_in_usd
         status
         created_at
+        transaction_id
       }
       total
       page

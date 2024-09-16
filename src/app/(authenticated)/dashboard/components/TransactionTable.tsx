@@ -83,14 +83,16 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
                     {format(new Date(transaction.created_at), 'yyyy-MM-dd HH:mm:ss')}
                   </td>
                   <td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 w-10'>
-                    <a
-                      href={`https://tonviewer.com/transaction/${transaction.id}`}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      className='text-gray-400 hover:text-gray-600'>
-                      <ExternalLink className='h-5 w-5' />
-                      <span className='sr-only'>View transaction {transaction.id}</span>
-                    </a>
+                    {transaction.transaction_id && (
+                      <a
+                        href={`https://tonviewer.com/transaction/${transaction.transaction_id}`}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-gray-400 hover:text-gray-600'>
+                        <ExternalLink className='h-5 w-5' />
+                        <span className='sr-only'>View transaction {transaction.id}</span>
+                      </a>
+                    )}
                   </td>
                 </tr>
               ))}
