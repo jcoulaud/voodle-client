@@ -50,7 +50,7 @@ export default function Dashboard() {
   return (
     <>
       <PageHeader
-        title='Transaction History'
+        title='Trading History'
         description='All the transactions executed by your strategies.'
       />
 

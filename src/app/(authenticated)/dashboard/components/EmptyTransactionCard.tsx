@@ -16,7 +16,7 @@ export const EmptyTransactionCard: React.FC<EmptyTransactionCardProps> = ({ hasF
         </div>
         <h3 className='mt-2 text-lg font-semibold text-text-title'>No transactions yet</h3>
         <p className='mt-1 text-sm text-text-body'>
-          Your transaction history will appear here once you start executing strategies.
+          Your trading history will appear here once you start executing strategies.
           <br />
           You need to fund your wallet first in order to create a strategy.
         </p>
