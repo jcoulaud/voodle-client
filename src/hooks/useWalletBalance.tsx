@@ -19,7 +19,7 @@ export const useWalletBalance = (address: string) => {
     const decimals = 9; // TON decimals
     const balanceNum = parseFloat(rawBalance);
     if (isNaN(balanceNum)) return 'Invalid';
-    return (balanceNum / Math.pow(10, decimals)).toFixed(4);
+    return (balanceNum / Math.pow(10, decimals)).toString();
   }, []);
 
   useEffect(() => {

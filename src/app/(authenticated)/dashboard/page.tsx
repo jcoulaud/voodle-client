@@ -17,12 +17,11 @@ export default function Dashboard() {
   const [page, setPage] = useState(1);
   const [hasFunds, setHasFunds] = useState(false);
 
-  const { wallets, isLoading: isLoadingWallets, error: errorWallets } = useUserWallets();
+  const { wallets, error: errorWallets } = useUserWallets();
   const primaryWalletAddress = wallets?.[0]?.address ?? '';
-  const { balance, isLoadingBalance } = useWalletBalance(primaryWalletAddress);
+  const { balance } = useWalletBalance(primaryWalletAddress);
 
   useEffect(() => {
-    console.log('balance', balance);
     if (balance && Number(balance) > 0) {
       setHasFunds(true);
     }
