@@ -21,7 +21,7 @@ import {
 import React, { useState } from 'react';
 
 interface StrategyCardProps {
-  strategy: UserStrategy;
+  strategy: UserStrategy & { pnlUSD: number; pnlTON: number };
   onPause: (id: number, isActive: boolean) => void;
   onRename: (id: number, newName: string) => void;
 }
@@ -184,6 +184,31 @@ const SellConditions: React.FC<{ strategies?: SellStrategy[] }> = ({ strategies 
   );
 };
 
+const Pnl: React.FC<{ pnlUSD: number; pnlTON: number }> = ({ pnlUSD, pnlTON }) => {
+  const formatCurrency = (value: number, currency: string) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  };
+
+  return (
+    <div className='my-4'>
+      <h3 className='text-base font-medium text-text-title'>PNL (Profit and Loss)</h3>
+      <div className='mt-2 space-x-2'>
+        <Badge variant={pnlUSD >= 0 ? 'green' : 'red'} rounded='full'>
+          {formatCurrency(Math.abs(pnlUSD), 'USD')}
+        </Badge>
+        <Badge variant={pnlTON >= 0 ? 'green' : 'red'} rounded='full'>
+          {Math.abs(pnlTON).toFixed(2)} TON
+        </Badge>
+      </div>
+    </div>
+  );
+};
+
 export const StrategyCard: React.FC<StrategyCardProps> = ({ strategy, onPause, onRename }) => {
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
 
@@ -228,6 +253,7 @@ export const StrategyCard: React.FC<StrategyCardProps> = ({ strategy, onPause, o
         <Card.Content>
           <BuyConditions buy={strategy.strategyLogic.buy} />
           <SellConditions strategies={strategy.strategyLogic.sell} />
+          <Pnl pnlUSD={strategy.pnlUSD} pnlTON={strategy.pnlTON} />
         </Card.Content>
       </Card>
 

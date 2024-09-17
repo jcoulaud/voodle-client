@@ -8,6 +8,8 @@ export const GET_USER_STRATEGIES = gql`
       isActive
       strategyLogic
       maxBetAmount
+      pnlUSD
+      pnlTON
     }
   }
 `;

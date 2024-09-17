@@ -16,9 +16,8 @@ export default function StrategiesPage() {
   const [editStrategy] = useMutation(EDIT_STRATEGY);
 
   const strategies = data?.userStrategies || [];
-  const filteredStrategies = showInactive
-    ? strategies
-    : strategies.filter((s: UserStrategy) => s.isActive);
+  const activeStrategies = strategies.filter((s: UserStrategy) => s.isActive);
+  const inactiveStrategies = strategies.filter((s: UserStrategy) => !s.isActive);
 
   const handlePause = (id: number, isActive: boolean) => {
     toast.promise(
@@ -75,7 +74,7 @@ export default function StrategiesPage() {
 
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         <CreateNewStrategyCard />
-        {filteredStrategies.map((strategy: UserStrategy) => (
+        {activeStrategies.map((strategy: UserStrategy) => (
           <StrategyCard
             key={strategy.id}
             strategy={strategy}
@@ -83,6 +82,15 @@ export default function StrategiesPage() {
             onRename={handleRename}
           />
         ))}
+        {showInactive &&
+          inactiveStrategies.map((strategy: UserStrategy) => (
+            <StrategyCard
+              key={strategy.id}
+              strategy={strategy}
+              onPause={handlePause}
+              onRename={handleRename}
+            />
+          ))}
       </div>
     </>
   );

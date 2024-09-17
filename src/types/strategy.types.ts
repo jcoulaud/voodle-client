@@ -76,4 +76,6 @@ export interface UserStrategy {
   name: string;
   isActive: boolean;
   strategyLogic: StrategyLogic;
+  pnlUSD: number;
+  pnlTON: number;
 }
