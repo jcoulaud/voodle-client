@@ -1,7 +1,8 @@
 'use client';
 
+import { SEND_MAGIC_LINK } from '@/app/lib/graphql/mutations/auth';
+import { useMutation } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -17,6 +18,7 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [sendMagicLink] = useMutation(SEND_MAGIC_LINK);
 
   const {
     control,
@@ -31,15 +33,12 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const result = await signIn('custom-email', {
-        email: data.email,
-        redirect: false,
-      });
+      const result = await sendMagicLink({ variables: { email: data.email } });
 
-      if (result?.error) {
-        setError(result.error);
-      } else {
+      if (result.data?.sendMagicLink.success) {
         setSuccess(true);
+      } else {
+        setError(result.data?.sendMagicLink.message || 'An unexpected error occurred.');
       }
     } catch (error) {
       setError('An unexpected error occurred.');

@@ -1,32 +1,57 @@
-import Cookies from 'js-cookie';
+import { LOGOUT, REFRESH_TOKEN } from '@/app/lib/graphql/mutations/auth';
+import { ME } from '@/app/lib/graphql/queries/user';
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 
 export class TokenService {
-  private static readonly ACCESS_TOKEN_KEY = 'accessToken';
-  private static readonly REFRESH_TOKEN_KEY = 'refreshToken';
+  private static client: ApolloClient<NormalizedCacheObject> | null = null;
 
-  static setTokens(tokens: { accessToken: string; refreshToken: string }): void {
-    Cookies.set(this.ACCESS_TOKEN_KEY, tokens.accessToken, {
-      expires: undefined, // TODO: Set expiration
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-    });
-    Cookies.set(this.REFRESH_TOKEN_KEY, tokens.refreshToken, {
-      expires: undefined, // TODO: Set expiration
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-    });
+  static setClient(client: ApolloClient<NormalizedCacheObject>) {
+    TokenService.client = client;
   }
 
-  static getAccessToken(): string | undefined {
-    return Cookies.get(this.ACCESS_TOKEN_KEY);
+  private static ensureClient(): ApolloClient<NormalizedCacheObject> {
+    if (!TokenService.client) {
+      throw new Error('Apollo Client not set. Call TokenService.setClient() first.');
+    }
+    return TokenService.client;
   }
 
-  static getRefreshToken(): string | undefined {
-    return Cookies.get(this.REFRESH_TOKEN_KEY);
+  static async refreshTokens(): Promise<boolean> {
+    try {
+      const client = this.ensureClient();
+      const { data } = await client.mutate({
+        mutation: REFRESH_TOKEN,
+      });
+      return data?.refreshToken.success || false;
+    } catch (error) {
+      console.error('Failed to refresh tokens:', error);
+      return false;
+    }
   }
 
-  static clearTokens(): void {
-    Cookies.remove(this.ACCESS_TOKEN_KEY, { path: '/', domain: window.location.hostname });
-    Cookies.remove(this.REFRESH_TOKEN_KEY, { path: '/', domain: window.location.hostname });
+  static async logout(): Promise<void> {
+    try {
+      const client = this.ensureClient();
+      await client.mutate({
+        mutation: LOGOUT,
+      });
+      await client.resetStore();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }
+
+  static async checkAuthStatus(): Promise<boolean> {
+    try {
+      const client = this.ensureClient();
+      await client.query({
+        query: ME,
+        fetchPolicy: 'network-only',
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to check auth status:', error);
+      return false;
+    }
   }
 }

@@ -1,7 +1,7 @@
 'use client';
 
+import { ApolloWrapper } from '@/lib/apollo-client';
 import { ReactNode } from 'react';
-import { ApolloWrapper } from './ApolloProvider';
 import { AuthProvider } from './AuthProvider';
 
 interface AppProvidersProps {

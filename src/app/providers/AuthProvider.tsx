@@ -1,14 +1,10 @@
 import { Dialog } from '@/app/components/ui/Dialog';
-import {
-  REFRESH_TOKEN,
-  SEND_MAGIC_LINK,
-  VERIFY_MAGIC_LINK,
-} from '@/app/lib/graphql/mutations/auth';
+import { SEND_MAGIC_LINK, VERIFY_MAGIC_LINK } from '@/app/lib/graphql/mutations/auth';
 import { ME } from '@/app/lib/graphql/queries/user';
 import { TokenService } from '@/services/TokenService';
 import { MeQueryResponse, SendMagicLinkResponse, VerifyMagicLinkResponse } from '@/types';
 import { ApolloError, useApolloClient } from '@apollo/client';
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 interface User {
   email: string;
@@ -20,12 +16,12 @@ interface AuthContextType {
   loading: boolean;
   sendMagicLink: (email: string) => Promise<void>;
   verifyMagicLink: (token: string, email: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [mnemonic, setMnemonic] = useState<string | null>(null);
@@ -34,36 +30,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const verificationAttempted = useRef(false);
 
   const fetchUser = useCallback(async () => {
-    const refreshTokenAndRetry = async () => {
-      try {
-        const refreshToken = TokenService.getRefreshToken();
-        if (refreshToken) {
-          const { data } = await client.mutate<{
-            refreshToken: { success: boolean; accessToken: string; refreshToken: string };
-          }>({
-            mutation: REFRESH_TOKEN,
-            variables: { refreshToken },
-          });
-          if (data?.refreshToken.success) {
-            TokenService.setTokens({
-              accessToken: data.refreshToken.accessToken,
-              refreshToken: data.refreshToken.refreshToken,
-            });
-            await fetchUser();
-          } else {
-            throw new Error('Token refresh failed');
-          }
-        } else {
-          throw new Error('No refresh token available');
-        }
-      } catch (refreshError) {
-        console.error('Failed to refresh token:', refreshError);
-        TokenService.clearTokens();
-        setUser(null);
-      }
-    };
-
     try {
+      const isAuthenticated = await TokenService.checkAuthStatus();
+      if (!isAuthenticated) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
       const { data } = await client.query<MeQueryResponse>({
         query: ME,
         fetchPolicy: 'network-only',
@@ -72,7 +46,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Failed to fetch user:', error);
       if (error instanceof ApolloError && error.message.includes('Unauthorized')) {
-        await refreshTokenAndRetry();
+        const success = await TokenService.refreshTokens();
+        if (success) {
+          await fetchUser();
+        } else {
+          setUser(null);
+        }
       } else {
         setUser(null);
       }
@@ -82,15 +61,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [client]);
 
   useEffect(() => {
-    const token = TokenService.getAccessToken();
-    if (token) {
-      fetchUser();
-    } else {
-      setLoading(false);
-    }
+    fetchUser();
   }, [fetchUser]);
 
-  const sendMagicLink = async (email: string) => {
+  const sendMagicLink = async (email: string): Promise<void> => {
     const { data } = await client.mutate<SendMagicLinkResponse>({
       mutation: SEND_MAGIC_LINK,
       variables: { email },
@@ -101,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const verifyMagicLink = useCallback(
-    async (token: string, email: string) => {
+    async (token: string, email: string): Promise<void> => {
       if (verificationAttempted.current) {
         console.log('Verification already attempted, skipping.');
         return;
@@ -115,10 +89,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           variables: { token, email },
         });
         if (data?.verifyMagicLink.success) {
-          TokenService.setTokens({
-            accessToken: data.verifyMagicLink.accessToken!,
-            refreshToken: data.verifyMagicLink.refreshToken!,
-          });
           await fetchUser();
           if ('mnemonic' in data.verifyMagicLink) {
             setMnemonic(data.verifyMagicLink.mnemonic);
@@ -137,8 +107,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [client, fetchUser],
   );
 
-  const logout = useCallback(async () => {
-    TokenService.clearTokens();
+  const logout = useCallback(async (): Promise<void> => {
+    await TokenService.logout();
     setUser(null);
     await client.resetStore();
     window.location.href = '/';
@@ -164,9 +134,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       </Dialog>
     </AuthContext.Provider>
   );
-};
+});
 
-export const useAuth = () => {
+AuthProvider.displayName = 'AuthProvider';
+
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');

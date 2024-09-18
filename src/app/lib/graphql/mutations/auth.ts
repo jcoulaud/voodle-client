@@ -17,14 +17,10 @@ export const VERIFY_MAGIC_LINK = gql`
       ... on AuthResultBase {
         success
         message
-        accessToken
-        refreshToken
       }
       ... on AuthResultWithMnemonic {
         success
         message
-        accessToken
-        refreshToken
         mnemonic
       }
     }
@@ -32,11 +28,21 @@ export const VERIFY_MAGIC_LINK = gql`
 `;
 
 export const REFRESH_TOKEN = gql`
-  mutation RefreshToken($refreshToken: String!) {
-    refreshToken(refreshToken: $refreshToken) {
+  mutation RefreshToken {
+    refreshToken {
+      ... on AuthResultBase {
+        success
+        message
+      }
+    }
+  }
+`;
+
+export const LOGOUT = gql`
+  mutation Logout {
+    logout {
       success
       message
-      accessToken
     }
   }
 `;
