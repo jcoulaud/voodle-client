@@ -4,6 +4,7 @@ import { ME } from '@/app/lib/graphql/queries/user';
 import { TokenService } from '@/services/TokenService';
 import { MeQueryResponse, SendMagicLinkResponse, VerifyMagicLinkResponse } from '@/types';
 import { useApolloClient } from '@apollo/client';
+import { useRouter } from 'next/navigation';
 import { createContext, memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 interface User {
@@ -28,16 +29,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
   const [isMnemonicDialogOpen, setIsMnemonicDialogOpen] = useState(false);
   const client = useApolloClient();
   const verificationAttempted = useRef(false);
+  const router = useRouter();
 
   const fetchUser = useCallback(async () => {
     setLoading(true);
     try {
-      const isAuthenticated = await TokenService.checkAuthStatus();
-      if (!isAuthenticated) {
-        setUser(null);
-        return;
-      }
-
       const { data } = await client.query<MeQueryResponse>({
         query: ME,
         fetchPolicy: 'network-only',
@@ -104,17 +100,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
       await client.mutate({
         mutation: LOGOUT,
       });
+      setUser(null);
+      await TokenService.logout();
+      router.push('/');
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
-      setUser(null);
       setLoading(false);
-      await client.clearStore();
-      await client.cache.reset();
-      TokenService.removeCookies();
-      window.location.href = '/';
     }
-  }, [client]);
+  }, [client, router]);
 
   return (
     <AuthContext.Provider value={{ user, loading, sendMagicLink, verifyMagicLink, logout }}>

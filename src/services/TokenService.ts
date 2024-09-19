@@ -43,11 +43,8 @@ export class TokenService {
     }
   }
 
-  static removeCookies(): void {
-    if (typeof document !== 'undefined') {
-      const cookieOptions = 'path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;';
-      document.cookie = `accessToken=;${cookieOptions}`;
-      document.cookie = `refreshToken=;${cookieOptions}`;
-    }
+  static async logout(): Promise<void> {
+    const client = this.ensureClient();
+    await client.resetStore();
   }
 }

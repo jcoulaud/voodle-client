@@ -27,12 +27,10 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
                 };
                 forward(operation).subscribe(subscriber);
               } else {
-                TokenService.removeCookies();
                 observer.complete();
               }
             })
-            .catch((error) => {
-              TokenService.removeCookies();
+            .catch(() => {
               observer.complete();
             });
         });
@@ -47,6 +45,11 @@ function makeClient(): ApolloClient<NormalizedCacheObject> {
     ssrMode: typeof window === 'undefined',
     link: ApolloLink.from([errorLink, httpLink]),
     cache: new InMemoryCache(),
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'cache-and-network',
+      },
+    },
   });
 
   TokenService.setClient(client);
