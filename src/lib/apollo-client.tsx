@@ -1,6 +1,5 @@
 import { TokenService } from '@/services/TokenService';
-import { ApolloLink, HttpLink, Observable } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
+import { ApolloLink, HttpLink, NormalizedCacheObject, Observable } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import {
   ApolloClient,
@@ -13,12 +12,6 @@ const httpLink = new HttpLink({
   credentials: 'include',
 });
 
-const authLink = setContext(async (_, { headers }) => ({
-  headers: {
-    ...headers,
-  },
-}));
-
 const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
   if (graphQLErrors) {
     for (const err of graphQLErrors) {
@@ -27,13 +20,20 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
           TokenService.refreshTokens()
             .then((success) => {
               if (success) {
-                forward(operation).subscribe(observer);
+                const subscriber = {
+                  next: observer.next.bind(observer),
+                  error: observer.error.bind(observer),
+                  complete: observer.complete.bind(observer),
+                };
+                forward(operation).subscribe(subscriber);
               } else {
-                observer.error(err);
+                TokenService.removeCookies();
+                observer.complete();
               }
             })
             .catch((error) => {
-              observer.error(error);
+              TokenService.removeCookies();
+              observer.complete();
             });
         });
       }
@@ -42,10 +42,10 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
   if (networkError) console.error(`[Network error]: ${networkError}`);
 });
 
-function makeClient() {
-  const client = new ApolloClient({
+function makeClient(): ApolloClient<NormalizedCacheObject> {
+  const client = new ApolloClient<NormalizedCacheObject>({
     ssrMode: typeof window === 'undefined',
-    link: ApolloLink.from([authLink, errorLink, httpLink]),
+    link: ApolloLink.from([errorLink, httpLink]),
     cache: new InMemoryCache(),
   });
 

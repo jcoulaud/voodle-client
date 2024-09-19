@@ -41,8 +41,10 @@ export const REFRESH_TOKEN = gql`
 export const LOGOUT = gql`
   mutation Logout {
     logout {
-      success
-      message
+      ... on AuthResultBase {
+        success
+        message
+      }
     }
   }
 `;

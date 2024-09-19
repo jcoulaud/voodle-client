@@ -2,16 +2,18 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
+  const publicPaths = ['/', '/login', '/auth/verify'];
+  const isPublicPath = publicPaths.includes(request.nextUrl.pathname);
+
   const accessToken = request.cookies.get('accessToken')?.value;
   const refreshToken = request.cookies.get('refreshToken')?.value;
+  const isAuthenticated = !!accessToken && !!refreshToken;
 
-  const publicPaths = ['/', '/login', '/auth/verify'];
-
-  if (!accessToken && !refreshToken && !publicPaths.includes(request.nextUrl.pathname)) {
-    return NextResponse.redirect(new URL('/', request.url));
+  if (!isAuthenticated && !isPublicPath) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if ((accessToken || refreshToken) && publicPaths.includes(request.nextUrl.pathname)) {
+  if (isAuthenticated && isPublicPath) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

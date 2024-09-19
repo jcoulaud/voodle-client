@@ -1,9 +1,9 @@
 import { Dialog } from '@/app/components/ui/Dialog';
-import { SEND_MAGIC_LINK, VERIFY_MAGIC_LINK } from '@/app/lib/graphql/mutations/auth';
+import { LOGOUT, SEND_MAGIC_LINK, VERIFY_MAGIC_LINK } from '@/app/lib/graphql/mutations/auth';
 import { ME } from '@/app/lib/graphql/queries/user';
 import { TokenService } from '@/services/TokenService';
 import { MeQueryResponse, SendMagicLinkResponse, VerifyMagicLinkResponse } from '@/types';
-import { ApolloError, useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import { createContext, memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 interface User {
@@ -30,11 +30,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
   const verificationAttempted = useRef(false);
 
   const fetchUser = useCallback(async () => {
+    setLoading(true);
     try {
       const isAuthenticated = await TokenService.checkAuthStatus();
       if (!isAuthenticated) {
         setUser(null);
-        setLoading(false);
         return;
       }
 
@@ -45,16 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
       setUser(data.me);
     } catch (error) {
       console.error('Failed to fetch user:', error);
-      if (error instanceof ApolloError && error.message.includes('Unauthorized')) {
-        const success = await TokenService.refreshTokens();
-        if (success) {
-          await fetchUser();
-        } else {
-          setUser(null);
-        }
-      } else {
-        setUser(null);
-      }
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -108,10 +99,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
   );
 
   const logout = useCallback(async (): Promise<void> => {
-    await TokenService.logout();
-    setUser(null);
-    await client.resetStore();
-    window.location.href = '/';
+    setLoading(true);
+    try {
+      await client.mutate({
+        mutation: LOGOUT,
+      });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      setUser(null);
+      setLoading(false);
+      await client.clearStore();
+      await client.cache.reset();
+      TokenService.removeCookies();
+      window.location.href = '/';
+    }
   }, [client]);
 
   return (

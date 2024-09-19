@@ -1,4 +1,4 @@
-import { LOGOUT, REFRESH_TOKEN } from '@/app/lib/graphql/mutations/auth';
+import { REFRESH_TOKEN } from '@/app/lib/graphql/mutations/auth';
 import { ME } from '@/app/lib/graphql/queries/user';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 
@@ -16,6 +16,20 @@ export class TokenService {
     return TokenService.client;
   }
 
+  static async checkAuthStatus(): Promise<boolean> {
+    try {
+      const client = this.ensureClient();
+      const { data } = await client.query({
+        query: ME,
+        fetchPolicy: 'network-only',
+      });
+      return !!data.me;
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+      return false;
+    }
+  }
+
   static async refreshTokens(): Promise<boolean> {
     try {
       const client = this.ensureClient();
@@ -29,29 +43,11 @@ export class TokenService {
     }
   }
 
-  static async logout(): Promise<void> {
-    try {
-      const client = this.ensureClient();
-      await client.mutate({
-        mutation: LOGOUT,
-      });
-      await client.resetStore();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  }
-
-  static async checkAuthStatus(): Promise<boolean> {
-    try {
-      const client = this.ensureClient();
-      await client.query({
-        query: ME,
-        fetchPolicy: 'network-only',
-      });
-      return true;
-    } catch (error) {
-      console.error('Failed to check auth status:', error);
-      return false;
+  static removeCookies(): void {
+    if (typeof document !== 'undefined') {
+      const cookieOptions = 'path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+      document.cookie = `accessToken=;${cookieOptions}`;
+      document.cookie = `refreshToken=;${cookieOptions}`;
     }
   }
 }
