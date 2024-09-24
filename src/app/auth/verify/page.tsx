@@ -5,7 +5,7 @@ import { Card } from '@/app/components/ui/Card';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, Suspense, useCallback, useEffect, useState } from 'react';
 
 type VerificationStatus = 'idle' | 'verifying' | 'success' | 'error';
 
@@ -32,6 +32,14 @@ const decodeEmail = (email: string): string => {
 };
 
 const VerifyPage: FC = () => {
+  return (
+    <Suspense fallback={<LoadingState />}>
+      <VerifyPageContent />
+    </Suspense>
+  );
+};
+
+const VerifyPageContent: FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<VerificationStatus>(VERIFICATION_STATES.IDLE);
@@ -118,6 +126,16 @@ const SuccessState: FC = () => (
       You are being redirected to the dashboard...
     </Card.Description>
   </>
+);
+
+const LoadingState: FC = () => (
+  <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-background text-text-body'>
+    <Card className='w-full max-w-md'>
+      <Card.Content>
+        <VerifyingState />
+      </Card.Content>
+    </Card>
+  </div>
 );
 
 export default VerifyPage;
