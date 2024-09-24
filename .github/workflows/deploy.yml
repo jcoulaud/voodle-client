@@ -23,28 +23,29 @@ jobs:
           FRONTEND_ENV: ${{ secrets.FRONTEND_ENV }}
         run: |
           ssh $USER@$HOST << EOF
-            # Navigate to the frontend project directory
+            set -e
+            
+            echo "Starting frontend deployment..."
+            
+            # Source profile and set up PATH
+            source ~/.profile
+            export PATH="/home/$USER/.local/share/pnpm:$PATH"
+            
+            # Navigate to project directory and update changes
             cd /var/www/voodle/client
-
-            # Pull the latest changes
-            git pull origin main
-
-            # Update pnpm
-            npm install -g pnpm
-
-            # Setup environment
+            git fetch origin main
+            git reset --hard origin/main
+            
+            # Set up environment
             echo "$FRONTEND_ENV" > .env
-
+            
             # Install dependencies and build
             pnpm install
             pnpm run build
-
+            
             # Restart the frontend service
             pm2 restart voodle-frontend || pm2 start "pnpm start" --name "voodle-frontend"
-
-            # Save PM2 process list
             pm2 save
-
-            # Reload Nginx if necessary
-            sudo systemctl reload nginx
+            
+            echo "Frontend deployment completed successfully"
           EOF
