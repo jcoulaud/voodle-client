@@ -18,7 +18,12 @@ export default function Home() {
         </div>
         <div className='mx-auto max-w-2xl text-center'>
           <h1 className='text-4xl font-bold tracking-tight text-foreground sm:text-6xl'>Voodle</h1>
-          <p className='mt-6 text-lg leading-8 text-muted-foreground'>Trading made easy</p>
+          <p className='mt-6 text-lg leading-8 text-muted-foreground'>
+            Voodle makes crypto trading easy. No jargon, no charts—just customizable rules like
+            “Invest $5 in tokens with `&apos;`Dog`&apos;` in the name” and automatic trades based on
+            clear conditions. Manage your strategies and track performance from an intuitive
+            dashboard. No trading experience needed.
+          </p>
           <div className='mt-10 flex items-center justify-center'>
             <Link href='/login' passHref>
               <Button variant='primary' size='lg'>

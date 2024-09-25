@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Voodle',
-  description: 'Trading Made Easy',
+  description: 'Simple Crypto Trading for Everyone',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
