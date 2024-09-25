@@ -4,6 +4,7 @@ import { ME } from '@/app/lib/graphql/queries/user';
 import { TokenService } from '@/services/TokenService';
 import { MeQueryResponse, SendMagicLinkResponse, VerifyMagicLinkResponse } from '@/types';
 import { useApolloClient } from '@apollo/client';
+import { useLogger } from 'next-axiom';
 import { useRouter } from 'next/navigation';
 import { createContext, memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
@@ -30,6 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
   const client = useApolloClient();
   const verificationAttempted = useRef(false);
   const router = useRouter();
+  const log = useLogger();
 
   const fetchUser = useCallback(async () => {
     setLoading(true);
@@ -38,14 +40,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = memo(({ chi
         query: ME,
         fetchPolicy: 'network-only',
       });
+      log.debug('User logged in', data.me);
       setUser(data.me);
     } catch (error) {
-      console.error('Failed to fetch user:', error);
       setUser(null);
     } finally {
       setLoading(false);
     }
-  }, [client]);
+  }, [client, log]);
 
   useEffect(() => {
     fetchUser();

@@ -1,7 +1,11 @@
-import type { NextRequest } from 'next/server';
+import { Logger } from 'next-axiom';
+import type { NextFetchEvent, NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function middleware(request: NextRequest, event: NextFetchEvent) {
+  const logger = new Logger({ source: 'middleware' });
+  logger.middleware(request);
+
   const publicPaths = ['/', '/login', '/auth/verify'];
   const isPublicPath = publicPaths.includes(request.nextUrl.pathname);
 
@@ -16,6 +20,8 @@ export function middleware(request: NextRequest) {
   if (isAuthenticated && isPublicPath) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
+
+  event.waitUntil(logger.flush());
 
   return NextResponse.next();
 }
