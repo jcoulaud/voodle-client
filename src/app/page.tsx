@@ -18,6 +18,9 @@ export default function Home() {
         </div>
         <div className='mx-auto max-w-2xl text-center'>
           <h1 className='text-4xl font-bold tracking-tight text-foreground sm:text-6xl'>Voodle</h1>
+          <h2 className='text-sm tracking-tight text-foreground'>
+            (Alpha version. TON supported. Solana and Ethereum coming soon)
+          </h2>
           <p className='mt-6 text-lg leading-8 text-muted-foreground'>
             Voodle makes crypto trading easy. No jargon, no charts—just customizable rules like
             &quot;Invest $5 in tokens with &apos;Dog&apos; in the name&quot; and automatic trades
