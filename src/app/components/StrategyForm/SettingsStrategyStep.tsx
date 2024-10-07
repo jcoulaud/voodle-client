@@ -46,14 +46,14 @@ export const SettingsStrategyStep: React.FC<{ onNext: () => void }> = memo(({ on
         control={control}
         render={({ field }) => (
           <Input
-            label='Max Bet Amount'
+            label='Maximum TON to bet'
             type='number'
             {...field}
             onChange={(value) => field.onChange(value)}
             error={
               errors.maxBetAmount?.message ||
               (!isMaxBetAmountValid
-                ? `Max bet amount exceeds your current balance of $${balance}`
+                ? `Max bet amount exceeds your current balance of ${balance} TON`
                 : undefined)
             }
             placeholder='Enter the maximum bet amount'

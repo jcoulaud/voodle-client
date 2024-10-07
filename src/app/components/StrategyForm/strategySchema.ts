@@ -81,7 +81,7 @@ export const strategySchema = z
     if (data.buy && data.buy.action.amount > data.maxBetAmount) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `Buy amount cannot exceed the maximum bet amount of $${data.maxBetAmount}`,
+        message: `Buy amount cannot exceed the maximum bet amount of ${data.maxBetAmount} TON`,
         path: ['buy', 'action', 'amount'],
       });
     }

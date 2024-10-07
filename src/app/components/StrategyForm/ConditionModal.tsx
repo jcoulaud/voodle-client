@@ -196,7 +196,7 @@ const ConditionModal = memo<ConditionModalProps>(
                 control={control}
                 render={({ field }) => (
                   <Checkbox
-                    label='Check Blacklist'
+                    label='Prevent buying common scam token names'
                     checked={field.value}
                     onChange={(e) => field.onChange(e.target.checked)}
                   />
@@ -250,7 +250,7 @@ function getConditionLabel(type: BuyCondition['type']): string {
     case 'age':
       return 'Age';
     case 'blacklist':
-      return 'Blacklist';
+      return 'Scam Prevention';
   }
 }
 

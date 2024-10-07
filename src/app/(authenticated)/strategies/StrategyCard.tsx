@@ -73,7 +73,7 @@ const getConditionName = (type: string): string => {
     case 'marketCap':
       return 'Market Cap';
     case 'blacklist':
-      return 'Blacklist';
+      return 'Prevention: ';
     case 'price':
       return 'Price';
     case 'age':
@@ -101,7 +101,9 @@ const ConditionBadge: React.FC<{ condition: BuyCondition | SellCondition }> = ({
       return `${condition.days} day${condition.days !== 1 ? 's' : ''}`;
     }
     if (isBlacklistCondition(condition)) {
-      return `${condition.checkDollarSign ? '$' : ''}${condition.checkBlacklist ? 'BL' : ''}`;
+      return `${condition.checkDollarSign ? '$ ' : ''}${
+        condition.checkBlacklist ? 'scam names' : ''
+      }`;
     }
     if ('value' in condition) {
       const addDollarSign =
@@ -154,7 +156,7 @@ const BuyConditions: React.FC<{
       <div className='mt-2'>
         <Badge variant='green' rounded='full'>
           <DollarSign className='h-4 w-4 mr-1' />
-          {`Buy $${buy.action.amount}`}
+          {`Buy ${buy.action.amount} TON`}
         </Badge>
       </div>
     </div>

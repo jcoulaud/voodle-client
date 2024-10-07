@@ -85,8 +85,7 @@ export const BuyStrategyStep: React.FC<BuyStrategyStepProps> = ({ onNext, onPrev
             <Input
               id='investment-amount'
               type='text'
-              label='Amount invested on each token'
-              currencySymbol='$'
+              label='Amount of TON invested on each token'
               placeholder='0.00'
               className='max-w-40'
               {...field}
