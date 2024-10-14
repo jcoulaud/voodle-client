@@ -99,4 +99,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the [Apache 2.0 License](./LICENSE) - see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the [AGPLv3 license](./LICENSE) - see the [LICENSE](./LICENSE) file for details.
